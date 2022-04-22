@@ -13,8 +13,7 @@
       
           var hue = Math.floor(Math.random() * 360)
           var color = 'hsl(' + hue + ', 100%, 50%)'
-          var increment = 1
-          
+          const increment = 1
           function updateColor() {
             hue = (hue + increment) % 360
             color = 'hsl(' + hue + ', 100%, 50%)'
@@ -32,7 +31,6 @@
           for (var x = 0; x < columns; x++) {
             drops[x] = 1
           }
-          
           function draw() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
             ctx.fillRect(0, 0, c.width, c.height)
@@ -48,7 +46,12 @@
             }
           }
           setInterval(draw, 33)
-                    
+          
+          const audio = new Audio("audio.mp3")
+          this.onmousedown = function() {
+            audio.play()
+          }
+          
         </script>
 
     </body>
