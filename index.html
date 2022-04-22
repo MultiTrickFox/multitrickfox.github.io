@@ -12,7 +12,8 @@
         width: 100%;
         overflow: hidden;
         display: flex;
-        justify-content: center;                 
+        justify-content: center;  
+        cursor: wait;               
         ">
 
       <script>
@@ -42,7 +43,7 @@
 
         function draw() {
 
-          context.fillStyle = 'rgba(0, 0, 0, 0.05)'
+          context.fillStyle = 'rgba(0, 0, 0, 0.056)'
           context.fillRect(0, 0, canvas.width, canvas.height)
 
           if (waiting_button_press) return
@@ -60,6 +61,7 @@
               if (!initial_drop_completed) {
                 initial_drop_completed = true
                 waiting_button_press = true
+                document.body.style.cursor = 'auto'
               }
 
             }
@@ -103,7 +105,7 @@
 
         this.onmousemove = function(event) {
 
-          if (initial_drop_completed && !waiting_button_press) { //(mouse_is_down) {
+          if (initial_drop_completed && !waiting_button_press) { //&& mouse_is_down) {
 
             row = Math.floor(event.clientY / fontSize)
             col = Math.floor(event.clientX / fontSize) 
