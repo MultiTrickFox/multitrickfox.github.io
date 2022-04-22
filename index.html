@@ -1,8 +1,8 @@
 <html>
 
     <head>
-        <title>MultiTrickFox's Space</title>
-        <link rel="icon" type="image/x-icon" href="favicon.png">
+      <title>MultiTrickFox's Space</title>
+      <link rel="icon" type="image/x-icon" href="favicon.png">
     </head>
     
     <body style="
@@ -10,22 +10,19 @@
         margin: 0;
         height: 100%;
         width: 100%;
-        overflow: hidden;
-        display: flex;
         justify-content: center;  
         cursor: wait;               
         ">
 
       <script>
 
-        var hue = Math.floor(Math.random() * 360)
-        var color = 'hsl('+hue+', 100%, 50%)'
-        const increment = 1
-        function updateColor() {  
-          hue = (hue + increment)
-          if (hue >= 360) hue -=360
-          color = 'hsl('+hue+', 100%, 50%)'
-        } setInterval(updateColor, 300)
+        const audio = new Audio("audio.wav")
+
+        audio.addEventListener('ended', function() {
+          audio.currentTime = 0
+          audio.volume /=2
+          audio.play()
+        }, false)
 
         var canvas = document.createElement('canvas')
         canvas.width = window.innerWidth
@@ -63,22 +60,23 @@
                 waiting_button_press = true
                 document.body.style.cursor = 'auto'
               }
-
             }
-
             drops[i]++
-            
           }
 
         } setInterval(draw, 50)
-          
-        const audio = new Audio("audio.wav")
 
-        audio.addEventListener('ended', function() {
-          audio.currentTime = 0
-          audio.volume /=2
-          audio.play()
-        },false)
+        var hue = Math.floor(Math.random()*360)
+        var color = 'hsl('+hue+', 100%, 50%)'
+        const increment = 1
+        
+        function updateColor() {  
+
+          hue = (hue + increment)
+          if (hue >= 360) hue -=360
+          color = 'hsl('+hue+', 100%, 50%)'
+
+        } setInterval(updateColor, 300)
 
         var mouse_is_down = false
 
@@ -106,86 +104,79 @@
         this.onmousemove = function(event) {
 
           if (initial_drop_completed && !waiting_button_press) { //&& mouse_is_down) {
-
             row = Math.floor(event.clientY / fontSize)
             col = Math.floor(event.clientX / fontSize) 
             drops[col] = row
-
           }
+
+          if (initial_drop_completed && !waiting_button_press && event.clientX > 3*window.innerWidth/5)
+
+            for (var i = 0; i < buttons.length; i++)
+
+              buttons[i].style.opacity = 
+                1 - Math.sqrt(
+                  Math.pow(event.clientX - buttons[i].offsetLeft+buttons[i].offsetWidth/2, 2) + 
+                  Math.pow(event.clientY - buttons[i].offsetTop+buttons[i].offsetHeight/2, 2)
+                ) / (Math.max(window.innerHeight, window.innerWidth) - 3*window.innerWidth/5)
+
+          else for (var i = 0; i < buttons.length; i++) buttons[i].style.opacity = 0
 
         }
 
-        // Navigate
+        var buttons = [
+          {
+            text: 'Button 1',
+            onclick: function() {
+              document.body.style.cursor = 'wait'
+              setInterval(function transition() {
+                audio.volume /= 2
+                if (audio.volume < .1)
+                  //window.open('page0.html', '_blank');
+                  window.location.href = 'page0.html'
+              }, 426)
+            }
+          },
+          {
+            text: 'Button 2',
+            onclick: function() {
+              alert('Button 2 clicked')
+            }
+          },
+          {
+            text: 'Button 3',
+            onclick: function() {
+              alert('Button 3 clicked')
+            }
+          },
+          {
+            text: 'Button 4',
+            onclick: function() {
+              alert('Button 4 clicked')
+            }
+          }
+        ]
 
-        // var buttons = [
-        //   {
-        //     text: 'SoundsAreColors',
-        //     onclick: function() {
-        //       window.open('https://play.google.com/store/apps/details?id=k.soundsarecolors', '_blank');
-        //     }
-        //   },
-        //   {
-        //     text: 'Button 2',
-        //     onclick: function() {
-        //       alert('Button 2 clicked')
-        //     }
-        //   },
-        //   {
-        //     text: 'Button 3',
-        //     onclick: function() {
-        //       alert('Button 3 clicked')
-        //     }
-        //   },
-        //   {
-        //     text: 'Button 4',
-        //     onclick: function() {
-        //       alert('Button 4 clicked')
-        //     }
-        //   }
-        // ]
+        for (var i = 0; i < buttons.length; i++) {
+          var button = document.createElement('button')
+          document.body.appendChild(button)
+          button.innerHTML = buttons[i].text
+          button.onclick = buttons[i].onclick
+          buttons[i] = button
+          button.style.position = 'absolute'
+          button.style.top = (i+1/2) * window.innerHeight / buttons.length + 'px'
+          button.style.right = window.innerHeight / 70 + 'px'
+          button.style.background = 'transparent'
+          button.style.border = 'white'
+          button.style.color = 'white'
+          button.style.fontFamily = 'Arial'
+          button.style.fontSize = '12pt'
+          button.style.cursor = 'pointer'
+          button.style.opacity = 0
+        }
 
-        // for (var i = 0; i < buttons.length; i++) {
-        //   var button = document.createElement('button')
-        //   button.innerHTML = buttons[i].text
-        //   button.onclick = buttons[i].onclick
-        //   buttons[i] = button
-        //   button.style.position = 'absolute'
-        //   button.style.top = (i+1/2) * window.innerHeight / buttons.length + 'px'
-        //   button.style.right = window.innerHeight / 70 + 'px'
-        //   button.style.background = 'transparent'
-        //   button.style.border = 'white'
-        //   button.style.color = 'white'
-        //   button.style.fontFamily = 'Arial'
-        //   button.style.fontSize = '12pt'
-        //   button.style.opacity = '.66'
-        //   button.style.cursor = 'pointer'
-        //   button.addEventListener('mouseover', function(event) {
-        //     event.target.style.opacity = .78
-        //   })
-        //   button.addEventListener('mouseout', function(event) {
-        //     event.target.style.opacity = .66
-        //   })
-        // }
-
-        // var nav_buttons_active = false
-
-        // this.onmousemove = function(event) {
-
-        //   if (initial_drop_completed && !waiting_button_press && event.clientX > 2*window.innerWidth/3) {
-
-        //     for (var i = 0; i < buttons.length; i++) document.body.appendChild(buttons[i])
-        //     nav_buttons_active = true
-
-        //   } else if (nav_buttons_active) {
-
-        //     for (var i = 0; i < buttons.length; i++) document.body.removeChild(buttons[i])
-        //     nav_buttons_active = false
-
-        //   }
-
-        // }
-
-        // Misc
+        setInterval(function updateButtonColor() {
+          for (var i = 0; i < buttons.length; i++) buttons[i].style.color = color;
+        }, 300)
 
         this.onkeypress = function(event) {
 
