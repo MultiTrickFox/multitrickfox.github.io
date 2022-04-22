@@ -7,55 +7,71 @@
     
     <body style="
         background-color: black;
-        margin: 0;
+        padding: 0;
         height: 100%;
         width: 100%;
         overflow: hidden;
         display: flex;
         justify-content: center;                 
+        margin: 0;
         ">
 
       <script>
       
           var hue = Math.floor(Math.random() * 360)
-          var color = 'hsl(' + hue + ', 100%, 50%)'
+          var color = 'hsl('+hue+', 100%, 50%)'
           const increment = 1
           function updateColor() {
-            hue = (hue + increment) % 360
-            color = 'hsl(' + hue + ', 100%, 50%)'
-          }
-          setInterval(updateColor, 300)
+            hue = (hue + increment)
+            if (hue >= 360) hue -=360
+            color = 'hsl('+hue+', 100%, 50%)'
+          } setInterval(updateColor, 300)
 
-          var c = document.createElement('canvas')
-          c.width = window.innerWidth
-          c.height = window.innerHeight
-          document.body.appendChild(c)
-          var ctx = c.getContext('2d')
+          var canvas = document.createElement('canvas')
+          canvas.width = window.innerWidth
+          canvas.height = window.innerHeight
+          document.body.appendChild(canvas)
+          var context = canvas.getContext('2d')
           var fontSize = 10
-          var columns = c.width / fontSize
+          var columns = canvas.width / fontSize
           var drops = []
-          for (var x = 0; x < columns; x++) {
+          for (var x = 0; x < columns; x++)
             drops[x] = 1
-          }
+
+          var initial_drop_completed = false
+          var waiting_button_press = false
+
           function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
-            ctx.fillRect(0, 0, c.width, c.height)
-            ctx.fillStyle = color
-            ctx.font = fontSize + 'px comic sans'
+
+            context.font = fontSize + 'px comic sans'
+            context.fillStyle = 'rgba(0, 0, 0, 0.05)'
+            context.fillRect(0, 0, canvas.width, canvas.height)
+            context.fillStyle = waiting_button_press ? black : color
+
             for (var i = 0; i < drops.length; i++) {
-              var text = String.fromCharCode(Math.random() * 128)
-              ctx.fillText(text, i * fontSize, drops[i] * fontSize)
-              if (drops[i] * fontSize > c.height && Math.random() > 0.975) {
+
+              context.fillText(String.fromCharCode(Math.random()*128), i * fontSize, drops[i] * fontSize)
+
+              if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                 drops[i] = 0
+
+                if (!initial_drop_completed) { 
+                  initial_drop_completed = true
+                  waiting_button_press = true
+                }
+
               }
+
               drops[i]++
+
             }
-          }
-          setInterval(draw, 33)
+
+          } setInterval(draw, 33)
           
-          const audio = new Audio("audio.mp3")
+          const audio = new Audio("audio.wav")
           this.onmousedown = function() {
             audio.play()
+            if (waiting_button_press) waiting_button_press = false
           }
           
         </script>
