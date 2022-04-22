@@ -1,0 +1,57 @@
+<html>
+
+    <head>
+        
+        <title>MultiTrickFox's Space</title>
+        <!-- <link rel="icon" type="image/x-icon" href="favicon.png"> -->
+        
+    </head>
+    
+    <body>
+
+      <script>
+      
+        document.addEventListener("DOMContentLoaded", function() {
+
+          var c = document.createElement('canvas')
+          c.width = window.innerWidth
+          c.height = window.innerHeight
+          document.body.appendChild(c)
+          var ctx = c.getContext('2d')
+          var fontSize = 10
+          var columns = c.width / fontSize
+          var drops = []
+          for (var x = 0; x < columns; x++) {
+            drops[x] = 1
+          }
+          function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
+            ctx.fillRect(0, 0, c.width, c.height)
+            ctx.fillStyle = color
+            ctx.font = fontSize + 'px comic sans'
+            for (var i = 0; i < drops.length; i++) {
+              var text = String.fromCharCode(Math.random() * 128)
+              ctx.fillText(text, i * fontSize, drops[i] * fontSize)
+              if (drops[i] * fontSize > c.height && Math.random() > 0.975) {
+                drops[i] = 0
+              }
+              drops[i]++
+            }
+          }
+          setInterval(draw, 33)
+
+          var color
+          var increment = 1
+          var hue = 0
+          function updateColor() {
+            hue = (hue + increment) % 360
+            color = 'hsl(' + hue + ', 100%, 50%)'
+          }
+          setInterval(updateColor, 300)
+          })
+          
+        </script>
+
+    </body>
+    
+</html>
