@@ -7,18 +7,15 @@
     
     <body style="
         background-color: black;
-        padding: 0;
+        margin: 0;
         height: 100%;
         width: 100%;
         overflow: hidden;
         display: flex;
         justify-content: center;                 
-        margin: 0;
         ">
 
       <script>
-
-        // Visuals
 
         var hue = Math.floor(Math.random() * 360)
         var color = 'hsl('+hue+', 100%, 50%)'
@@ -36,6 +33,7 @@
         var context = canvas.getContext('2d')
         var fontSize = 10
         var columns = canvas.width / fontSize
+        var rows = canvas.height / fontSize
         var drops = []
         for (var x = 0; x < columns; x++) drops[x] = 1
 
@@ -44,7 +42,7 @@
 
         function draw() {
 
-          context.font = fontSize + 'px comic sans'
+          context.font = fontSize + 'px monospace'
           context.fillStyle = 'rgba(0, 0, 0, 0.05)'
           context.fillRect(0, 0, canvas.width, canvas.height)
           if (waiting_button_press) return
@@ -65,13 +63,11 @@
             }
 
             drops[i]++
-
+            
           }
 
         } setInterval(draw, 50)
           
-        // Audio
-
         const audio = new Audio("audio.wav")
 
         audio.addEventListener('ended', function() {
@@ -80,9 +76,11 @@
           audio.play()
         },false)
 
-        // Initiate
+        var mouse_is_down = false
 
         this.onmousedown = function(event) {
+
+          mouse_is_down = true
 
           if (event.target.tagName != 'CANVAS') return
           if (!initial_drop_completed) return
@@ -92,59 +90,77 @@
 
         }
 
-        // Navigate
+        this.onmouseup = function(event) {
 
-        var buttons = [
-          {
-            text: 'SoundsAreColors',
-            onclick: function() {
-              window.open('https://play.google.com/store/apps/details?id=k.soundsarecolors', '_blank');
-            }
-          },
-          {
-            text: 'Button 2',
-            onclick: function() {
-              alert('Button 2 clicked')
-            }
-          },
-          {
-            text: 'Button 3',
-            onclick: function() {
-              alert('Button 3 clicked')
-            }
-          },
-          {
-            text: 'Button 4',
-            onclick: function() {
-              alert('Button 4 clicked')
-            }
-          }
-        ]
+          mouse_is_down = false
 
-        for (var i = 0; i < buttons.length; i++) {
-          var button = document.createElement('button')
-          button.innerHTML = buttons[i].text
-          button.onclick = buttons[i].onclick
-          buttons[i] = button
-          button.style.position = 'absolute'
-          button.style.top = (i+1/2) * window.innerHeight / buttons.length + 'px'
-          button.style.right = window.innerHeight / 70 + 'px'
-          button.style.background = 'transparent'
-          button.style.border = 'white'
-          button.style.color = 'white'
-          button.style.fontFamily = 'Arial'
-          button.style.fontSize = '12pt'
-          button.style.opacity = '.66'
-          button.style.cursor = 'pointer'
-          button.addEventListener('mouseover', function(event) {
-            event.target.style.opacity = .78
-          })
-          button.addEventListener('mouseout', function(event) {
-            event.target.style.opacity = .66
-          })
         }
 
-        var nav_buttons_active = false
+        this.onmousemove = function(event) {
+
+          row = Math.floor(canvas.height/event.clientY * rows)
+
+          col = Math.floor(canvas.width/event.clientX * columns) 
+
+          //console.log(""+canvas.height+"/"+event.clientY + "&" + canvas.width+"/"+event.clientX)
+
+          //drops[col] = row
+
+        }
+
+        // Navigate
+
+        // var buttons = [
+        //   {
+        //     text: 'SoundsAreColors',
+        //     onclick: function() {
+        //       window.open('https://play.google.com/store/apps/details?id=k.soundsarecolors', '_blank');
+        //     }
+        //   },
+        //   {
+        //     text: 'Button 2',
+        //     onclick: function() {
+        //       alert('Button 2 clicked')
+        //     }
+        //   },
+        //   {
+        //     text: 'Button 3',
+        //     onclick: function() {
+        //       alert('Button 3 clicked')
+        //     }
+        //   },
+        //   {
+        //     text: 'Button 4',
+        //     onclick: function() {
+        //       alert('Button 4 clicked')
+        //     }
+        //   }
+        // ]
+
+        // for (var i = 0; i < buttons.length; i++) {
+        //   var button = document.createElement('button')
+        //   button.innerHTML = buttons[i].text
+        //   button.onclick = buttons[i].onclick
+        //   buttons[i] = button
+        //   button.style.position = 'absolute'
+        //   button.style.top = (i+1/2) * window.innerHeight / buttons.length + 'px'
+        //   button.style.right = window.innerHeight / 70 + 'px'
+        //   button.style.background = 'transparent'
+        //   button.style.border = 'white'
+        //   button.style.color = 'white'
+        //   button.style.fontFamily = 'Arial'
+        //   button.style.fontSize = '12pt'
+        //   button.style.opacity = '.66'
+        //   button.style.cursor = 'pointer'
+        //   button.addEventListener('mouseover', function(event) {
+        //     event.target.style.opacity = .78
+        //   })
+        //   button.addEventListener('mouseout', function(event) {
+        //     event.target.style.opacity = .66
+        //   })
+        // }
+
+        // var nav_buttons_active = false
 
         // this.onmousemove = function(event) {
 
@@ -166,12 +182,15 @@
 
         this.onkeypress = function(event) {
 
-          switch(event.keycode) {
+          switch(event.keyCode) {
 
-            case 0:
+            case 13: // enter
               break
 
-            default: alert(event.keycode)
+            case 32: // space
+              break
+
+            default: alert(event.keyCode)
 
           }
 
