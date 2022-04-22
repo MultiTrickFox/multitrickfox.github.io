@@ -31,28 +31,30 @@
         canvas.height = window.innerHeight
         document.body.appendChild(canvas)
         var context = canvas.getContext('2d')
+
         var fontSize = 10
         var columns = canvas.width / fontSize
         var rows = canvas.height / fontSize
-        var drops = []
-        for (var x = 0; x < columns; x++) drops[x] = 1
+        var drops = []; for (var x = 0; x < columns; x++) drops[x] = 1
 
         var initial_drop_completed = false
         var waiting_button_press = false
 
         function draw() {
 
-          context.font = fontSize + 'px monospace'
           context.fillStyle = 'rgba(0, 0, 0, 0.05)'
           context.fillRect(0, 0, canvas.width, canvas.height)
+
           if (waiting_button_press) return
+
           context.fillStyle = color
+          context.font = fontSize + 'px monospace'
 
           for (var i = 0; i < drops.length; i++) {
 
-            context.fillText(String.fromCharCode(Math.random()*128), i * fontSize, drops[i] * fontSize)
+            context.fillText(String.fromCharCode(Math.random()*128), i*fontSize, drops[i]*fontSize)
 
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
               drops[i] = 0
 
               if (!initial_drop_completed) { 
