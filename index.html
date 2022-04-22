@@ -18,6 +18,8 @@
 
       <script>
 
+        // Visuals
+
         var hue = Math.floor(Math.random() * 360)
         var color = 'hsl('+hue+', 100%, 50%)'
         const increment = 1
@@ -45,7 +47,8 @@
           context.font = fontSize + 'px comic sans'
           context.fillStyle = 'rgba(0, 0, 0, 0.05)'
           context.fillRect(0, 0, canvas.width, canvas.height)
-          context.fillStyle = waiting_button_press ? black : color
+          if (waiting_button_press) return
+          context.fillStyle = color
 
           for (var i = 0; i < drops.length; i++) {
 
@@ -65,19 +68,11 @@
 
           }
 
-        } setInterval(draw, 33)
+        } setInterval(draw, 50)
           
+        // Audio
+
         const audio = new Audio("audio.wav")
-
-        this.onmousedown = function() {
-
-          if (!initial_drop_completed) return
-
-          audio.play()
-
-          if (waiting_button_press) waiting_button_press = false
-
-        }
 
         audio.addEventListener('ended', function() {
           audio.currentTime = 0
@@ -85,9 +80,100 @@
           audio.play()
         },false)
 
-        this.onkeypress = function() {
+        // Initiate
 
-            
+        this.onmousedown = function(event) {
+
+          if (event.target.tagName != 'CANVAS') return
+          if (!initial_drop_completed) return
+
+          audio.play()
+          if (waiting_button_press) waiting_button_press = false
+
+        }
+
+        // Navigate
+
+        var buttons = [
+          {
+            text: 'SoundsAreColors',
+            onclick: function() {
+              window.open('https://play.google.com/store/apps/details?id=k.soundsarecolors', '_blank');
+            }
+          },
+          {
+            text: 'Button 2',
+            onclick: function() {
+              alert('Button 2 clicked')
+            }
+          },
+          {
+            text: 'Button 3',
+            onclick: function() {
+              alert('Button 3 clicked')
+            }
+          },
+          {
+            text: 'Button 4',
+            onclick: function() {
+              alert('Button 4 clicked')
+            }
+          }
+        ]
+
+        for (var i = 0; i < buttons.length; i++) {
+          var button = document.createElement('button')
+          button.innerHTML = buttons[i].text
+          button.onclick = buttons[i].onclick
+          buttons[i] = button
+          button.style.position = 'absolute'
+          button.style.top = (i+1/2) * window.innerHeight / buttons.length + 'px'
+          button.style.right = window.innerHeight / 70 + 'px'
+          button.style.background = 'transparent'
+          button.style.border = 'white'
+          button.style.color = 'white'
+          button.style.fontFamily = 'Arial'
+          button.style.fontSize = '12pt'
+          button.style.opacity = '.66'
+          button.style.cursor = 'pointer'
+          button.addEventListener('mouseover', function(event) {
+            event.target.style.opacity = .78
+          })
+          button.addEventListener('mouseout', function(event) {
+            event.target.style.opacity = .66
+          })
+        }
+
+        var nav_buttons_active = false
+
+        // this.onmousemove = function(event) {
+
+        //   if (initial_drop_completed && !waiting_button_press && event.clientX > 2*window.innerWidth/3) {
+
+        //     for (var i = 0; i < buttons.length; i++) document.body.appendChild(buttons[i])
+        //     nav_buttons_active = true
+
+        //   } else if (nav_buttons_active) {
+
+        //     for (var i = 0; i < buttons.length; i++) document.body.removeChild(buttons[i])
+        //     nav_buttons_active = false
+
+        //   }
+
+        // }
+
+        // Misc
+
+        this.onkeypress = function(event) {
+
+          switch(event.keycode) {
+
+            case 0:
+              break
+
+            default: alert(event.keycode)
+
+          }
 
         }
           
