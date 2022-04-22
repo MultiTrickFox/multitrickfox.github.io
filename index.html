@@ -17,64 +17,81 @@
         ">
 
       <script>
-      
-          var hue = Math.floor(Math.random() * 360)
-          var color = 'hsl('+hue+', 100%, 50%)'
-          const increment = 1
-          function updateColor() {
-            hue = (hue + increment)
-            if (hue >= 360) hue -=360
-            color = 'hsl('+hue+', 100%, 50%)'
-          } setInterval(updateColor, 300)
 
-          var canvas = document.createElement('canvas')
-          canvas.width = window.innerWidth
-          canvas.height = window.innerHeight
-          document.body.appendChild(canvas)
-          var context = canvas.getContext('2d')
-          var fontSize = 10
-          var columns = canvas.width / fontSize
-          var drops = []
-          for (var x = 0; x < columns; x++)
-            drops[x] = 1
+        var hue = Math.floor(Math.random() * 360)
+        var color = 'hsl('+hue+', 100%, 50%)'
+        const increment = 1
+        function updateColor() {  
+          hue = (hue + increment)
+          if (hue >= 360) hue -=360
+          color = 'hsl('+hue+', 100%, 50%)'
+        } setInterval(updateColor, 300)
 
-          var initial_drop_completed = false
-          var waiting_button_press = false
+        var canvas = document.createElement('canvas')
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        document.body.appendChild(canvas)
+        var context = canvas.getContext('2d')
+        var fontSize = 10
+        var columns = canvas.width / fontSize
+        var drops = []
+        for (var x = 0; x < columns; x++) drops[x] = 1
 
-          function draw() {
+        var initial_drop_completed = false
+        var waiting_button_press = false
 
-            context.font = fontSize + 'px comic sans'
-            context.fillStyle = 'rgba(0, 0, 0, 0.05)'
-            context.fillRect(0, 0, canvas.width, canvas.height)
-            context.fillStyle = waiting_button_press ? black : color
+        function draw() {
 
-            for (var i = 0; i < drops.length; i++) {
+          context.font = fontSize + 'px comic sans'
+          context.fillStyle = 'rgba(0, 0, 0, 0.05)'
+          context.fillRect(0, 0, canvas.width, canvas.height)
+          context.fillStyle = waiting_button_press ? black : color
 
-              context.fillText(String.fromCharCode(Math.random()*128), i * fontSize, drops[i] * fontSize)
+          for (var i = 0; i < drops.length; i++) {
 
-              if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0
+            context.fillText(String.fromCharCode(Math.random()*128), i * fontSize, drops[i] * fontSize)
 
-                if (!initial_drop_completed) { 
-                  initial_drop_completed = true
-                  waiting_button_press = true
-                }
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+              drops[i] = 0
 
+              if (!initial_drop_completed) { 
+                initial_drop_completed = true
+                waiting_button_press = true
               }
-
-              drops[i]++
 
             }
 
-          } setInterval(draw, 33)
-          
-          const audio = new Audio("audio.wav")
-          this.onmousedown = function() {
-            audio.play()
-            if (waiting_button_press) waiting_button_press = false
+            drops[i]++
+
           }
+
+        } setInterval(draw, 33)
           
-        </script>
+        const audio = new Audio("audio.wav")
+
+        this.onmousedown = function() {
+
+          if (!initial_drop_completed) return
+
+          audio.play()
+
+          if (waiting_button_press) waiting_button_press = false
+
+        }
+
+        audio.addEventListener('ended', function() {
+          audio.currentTime = 0
+          audio.volume /=2
+          audio.play()
+        },false)
+
+        this.onkeypress = function() {
+
+            
+
+        }
+          
+      </script>
 
     </body>
     
