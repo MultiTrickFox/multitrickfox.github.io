@@ -57,7 +57,7 @@
             if (drops[i] * fontSize > canvas.height && Math.random() > 0.987) {
               drops[i] = 0
 
-              if (!initial_drop_completed) { 
+              if (!initial_drop_completed) {
                 initial_drop_completed = true
                 waiting_button_press = true
               }
@@ -85,10 +85,13 @@
           mouse_is_down = true
 
           if (event.target.tagName != 'CANVAS') return
+
           if (!initial_drop_completed) return
 
-          audio.play()
-          if (waiting_button_press) waiting_button_press = false
+          if (waiting_button_press) {
+            waiting_button_press = false
+            audio.play()
+          }  
 
         }
 
@@ -100,13 +103,13 @@
 
         this.onmousemove = function(event) {
 
-          row = Math.floor(canvas.height/event.clientY * rows)
+          if (initial_drop_completed && !waiting_button_press) { //(mouse_is_down) {
 
-          col = Math.floor(canvas.width/event.clientX * columns) 
+            row = Math.floor(event.clientY / fontSize)
+            col = Math.floor(event.clientX / fontSize) 
+            drops[col] = row
 
-          //console.log(""+canvas.height+"/"+event.clientY + "&" + canvas.width+"/"+event.clientX)
-
-          //drops[col] = row
+          }
 
         }
 
