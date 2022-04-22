@@ -1,10 +1,8 @@
 <html>
 
     <head>
-        
         <title>MultiTrickFox's Space</title>
         <!-- <link rel="icon" type="image/x-icon" href="favicon.png"> -->
-        
     </head>
     
     <body>
@@ -12,6 +10,15 @@
       <script>
       
         document.addEventListener("DOMContentLoaded", function() {
+
+          var color
+          var increment = 1
+          var hue = 0
+          function updateColor() {
+            hue = (hue + increment) % 360
+            color = 'hsl(' + hue + ', 100%, 50%)'
+          }
+          setInterval(updateColor, 300)
 
           var c = document.createElement('canvas')
           c.width = window.innerWidth
@@ -39,16 +46,8 @@
             }
           }
           setInterval(draw, 33)
-
-          var color
-          var increment = 1
-          var hue = 0
-          function updateColor() {
-            hue = (hue + increment) % 360
-            color = 'hsl(' + hue + ', 100%, 50%)'
-          }
-          setInterval(updateColor, 300)
-          })
+          
+        })
           
         </script>
 
