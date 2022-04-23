@@ -21,10 +21,16 @@
       
       <script>
 
-        const skybox_size = 2_000
+        const skybox_size = 2_500
+
+        const box_size = 50
+        const box_locations = [
+          [100, 0, 0],
+          [200, 0, 100],
+          [300, 0, -100],
+        ]
 
         const floor_epsilon = .8
-
         var camera_y_lock = true
 
         var canvas
@@ -35,8 +41,8 @@
           setAttributes('antialias', true)
           pixelDensity(1)
 
-          canvas = createCanvas(windowHeight, windowHeight, WEBGL)
-          canvas.position((windowWidth-windowHeight)/2,0)
+          canvas = createCanvas(windowWidth, windowHeight, WEBGL)
+          canvas.position((windowWidth-width)/2,0)
 
           //cam = createEasyCam()
           cam = createRoverCam()
@@ -44,7 +50,7 @@
           cam.setState({
             position: [0,0,0],
             rotation: [0,0,0],
-            sensitivity: 0.01,
+            sensitivity: 0.006,
             speed: .2,
           })
 
@@ -56,59 +62,24 @@
 
           background(0)
 
-          //lights()
-          //ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1)
-
-          //light that comes from everywhere on the canvas. It has no particular source.
-          //ambientLight(100) // white light
-          //ambientMaterial(255, 102, 94) // magenta material
-
-          //regular point light
-          //pointLight(v1, v2, v3, x, y, z)
-
-          //a color and a direction
-          //directionalLight(v1, v2, v3, x, y, z)
-          // directionalLight(255,0,0, skybox_size/4,0,0) // behind camera
-          // directionalLight(0,255,0, 0,0,skybox_size/4) // left of camera
-          // directionalLight(0,0,255, 0,0,-skybox_size/4) // right of camera
-          // directionalLight(0,255,255, 0,skybox_size/4,0) // top of camera
-
-          //color, position, direction of light, angle and concentration.
-          //spotLight(v1, v2, v3, x, y, z, rx, ry, rz, [angle], [conc])
-          // spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
-          // spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
-          // spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
-          // spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
-
           spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
           spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
           spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
           spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
+          spotLight(255,255,0, 0,skybox_size,0, 0,-1,0, Math.PI/2, 255) // bot of camera
 
           stroke(0)
           fill(255)//0)
           box(skybox_size)
 
-          push()
-          translate(100, 0, 0)
-          stroke(0)
-          fill(255)
-          box(50)
-          pop()
-
-          push()
-          translate(200, 0, 100)
-          stroke(0)
-          fill(255)
-          box(50)
-          pop()
-
-          push()
-          translate(300, 0, -100)
-          stroke(0)
-          fill(255)
-          box(50)
-          pop()
+          for (var i = 0; i < box_locations.length; i++) {
+            push()
+            translate(box_locations[i][0], box_locations[i][1], box_locations[i][2])
+            stroke(0)
+            fill(255)
+            box(box_size)
+            pop()
+          }
 
           if (camera_y_lock) {
             if (Math.abs(cam.position.y) <= floor_epsilon) cam.position.y = 0
@@ -122,7 +93,7 @@
           else if (cam.position.x < -skybox_size/4) cam.position.x = -skybox_size/4
           if (cam.position.z > skybox_size/4) cam.position.z = skybox_size/4
           else if (cam.position.z < -skybox_size/4) cam.position.z = -skybox_size/4
-
+          
         }
 
         this.onkeypress = function(event) {
