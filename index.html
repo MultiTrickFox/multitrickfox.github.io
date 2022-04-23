@@ -31,37 +31,35 @@
         var context = canvas.getContext('2d')
 
         var fontSize = 10
-        var columns = canvas.width / fontSize
-        var rows = canvas.height / fontSize
-        var drops = []; for (var x = 0; x < columns; x++) drops[x] = 1
+        var char_locations = []; for (var x = 0; x < canvas.width/fontSize; x++) char_locations[x] = 1
 
-        var initial_drop_completed = false
-        var waiting_button_press = false
+        var loading_chars_completed = false
+        var waiting_after_loading = false
 
         function draw() {
 
           context.fillStyle = 'rgba(0, 0, 0, 0.056)'
           context.fillRect(0, 0, canvas.width, canvas.height)
 
-          if (waiting_button_press) return
+          if (waiting_after_loading) return
 
           context.fillStyle = color
-          context.font = fontSize + 'px monospace'
+          context.font = fontSize+'px monospace'
 
-          for (var i = 0; i < drops.length; i++) {
+          for (var i = 0; i < char_locations.length; i++) {
 
-            context.fillText(!use_alternate_chars ? String.fromCharCode(Math.random()*128) : alternate_characters[Math.floor(Math.random()*alternate_characters.length)], i*fontSize, drops[i]*fontSize)
+            context.fillText(!use_alternate_chars ? String.fromCharCode(Math.random()*128) : alternate_characters[Math.floor(Math.random()*alternate_characters.length)], i*fontSize, char_locations[i]*fontSize)
 
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.987) {
-              drops[i] = 0
+            if (char_locations[i] * fontSize > canvas.height && Math.random() > 0.987) {
+              char_locations[i] = 0
 
-              if (!initial_drop_completed) {
-                initial_drop_completed = true
-                waiting_button_press = true
+              if (!loading_chars_completed) {
+                loading_chars_completed = true
+                waiting_after_loading = true
                 document.body.style.cursor = 'auto'
               }
             }
-            drops[i]++
+            char_locations[i]++
           }
 
         } setInterval(draw, 50)
@@ -86,10 +84,10 @@
 
           if (event.target.tagName != 'CANVAS') return
 
-          if (!initial_drop_completed) return
+          if (!loading_chars_completed) return
 
-          if (waiting_button_press) {
-            waiting_button_press = false
+          if (waiting_after_loading) {
+            waiting_after_loading = false
             audio.play()
             for (var i = 0; i < buttons.length; i++) document.body.appendChild(buttons[i])
           }  
@@ -104,11 +102,11 @@
 
         this.onmousemove = function(event) {
 
-          if (initial_drop_completed && !waiting_button_press) {
+          if (loading_chars_completed && !waiting_after_loading) {
 
             row = Math.floor(event.clientY / fontSize)
             col = Math.floor(event.clientX / fontSize) 
-            drops[col] = row
+            char_locations[col] = row
 
             for (var i = 0; i < buttons.length; i++) buttons[i].style.opacity = 
               1 - Math.sqrt(
@@ -134,17 +132,17 @@
             }
           },
           {
-            text: 'Button 2',
+            text: 'Button N-2',
             onclick: function() {
             }
           },
           {
-            text: 'Button 3',
+            text: 'Button N-1',
             onclick: function() {
             }
           },
           {
-            text: 'Button 4',
+            text: 'Button N',
             onclick: function() {
             }
           }
@@ -179,7 +177,7 @@
             case 13: // enter
               break
 
-            case 32: 
+            case 32: // space
               use_alternate_chars = !use_alternate_chars
               document.body.style.cursor = 'none'
               break
