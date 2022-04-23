@@ -24,20 +24,48 @@
         var cam
 
         function setup() {
+  
+          setAttributes('antialias', true)
+          pixelDensity(1)
 
           canvas = createCanvas(windowHeight, windowHeight, WEBGL)
           canvas.position((windowWidth-windowHeight)/2,0)
-          
-          //cam = createEasyCam()
+
+          cam = createEasyCam()
 
           document.body.style.cursor = 'auto'
 
         }
 
+        function windowResized() {
+          resizeCanvas(windowWidth, windowHeight);
+          easycam.setViewport([0,0,windowWidth, windowHeight]);
+        }
+
         function draw() {
 
-          background(250)
+          rotateX(-0.5);
+          rotateY(-0.5);
+          scale(10);
           
+          background(0);
+          strokeWeight(1);
+
+          fill(255, 64, 0);
+          box(15);
+          
+          push();
+          translate(0, 0, 20);
+          fill(0, 64, 255);
+          box(5);
+          pop();
+          
+          push();
+          translate(0, 0, -20);
+          fill(64, 255, 0);
+          box(5);
+          pop();
+
         }
 
       </script>
