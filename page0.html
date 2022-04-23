@@ -39,22 +39,19 @@
           rover.setState({
             position: [0,0,0],
             rotation: [0,0,0],
-            sensitivity: 0.1,
-            speed: 1.0,
+            sensitivity: 0.01,
+            speed: .2,
           })
 
           document.body.style.cursor = 'auto'
 
         }
 
-        function windowResized() {
-          resizeCanvas(windowWidth, windowHeight);
-          easycam.setViewport([0,0,windowWidth, windowHeight]);
-        }
-
         function draw() {
 
           background(0)
+
+          lights()
 
           push()
           translate(100,0,0)
