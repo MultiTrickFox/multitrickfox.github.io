@@ -3,9 +3,10 @@
     <head>
       <title>MultiTrickFox's Space</title>
       <link rel="icon" type="image/x-icon" href="favicon.png">
-      <script src="p5.js"></script>
-      <!-- <script src="p5.sound.js"></script> -->
-      <script src="p5.easycam.js"></script>
+      <script src="libs/p5.js"></script>
+      <!-- <script src="libs/p5.sound.js"></script> -->
+      <script src="libs/p5.easycam.js"></script>
+      <script src="libs/p5.rovercam.js"></script>
     </head>
 
     <body style="
@@ -22,6 +23,7 @@
 
         var canvas
         var cam
+        var rover
 
         function setup() {
   
@@ -31,7 +33,15 @@
           canvas = createCanvas(windowHeight, windowHeight, WEBGL)
           canvas.position((windowWidth-windowHeight)/2,0)
 
-          cam = createEasyCam()
+          //cam = createEasyCam()
+          rover = createRoverCam()
+          rover.usePointerLock()
+          rover.setState({
+            position: [0,0,0],
+            rotation: [0,0,0],
+            sensitivity: 0.1,
+            speed: 1.0,
+          })
 
           document.body.style.cursor = 'auto'
 
@@ -44,27 +54,12 @@
 
         function draw() {
 
-          rotateX(-0.5);
-          rotateY(-0.5);
-          scale(10);
-          
-          background(0);
-          strokeWeight(1);
+          background(0)
 
-          fill(255, 64, 0);
-          box(15);
-          
-          push();
-          translate(0, 0, 20);
-          fill(0, 64, 255);
-          box(5);
-          pop();
-          
-          push();
-          translate(0, 0, -20);
-          fill(64, 255, 0);
-          box(5);
-          pop();
+          push()
+          translate(100,0,0)
+          box(50)
+          pop()
 
         }
 
