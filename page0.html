@@ -21,9 +21,14 @@
       
       <script>
 
+        const skybox_size = 2_000
+
+        const floor_epsilon = .8
+
+        var camera_y_lock = true
+
         var canvas
         var cam
-        var rover
 
         function setup() {
   
@@ -34,9 +39,9 @@
           canvas.position((windowWidth-windowHeight)/2,0)
 
           //cam = createEasyCam()
-          rover = createRoverCam()
-          rover.usePointerLock()
-          rover.setState({
+          cam = createRoverCam()
+          cam.usePointerLock()
+          cam.setState({
             position: [0,0,0],
             rotation: [0,0,0],
             sensitivity: 0.01,
@@ -51,12 +56,100 @@
 
           background(0)
 
-          lights()
+          //lights()
+          //ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1)
+
+          //light that comes from everywhere on the canvas. It has no particular source.
+          //ambientLight(100) // white light
+          //ambientMaterial(255, 102, 94) // magenta material
+
+          //regular point light
+          //pointLight(v1, v2, v3, x, y, z)
+
+          //a color and a direction
+          //directionalLight(v1, v2, v3, x, y, z)
+          // directionalLight(255,0,0, skybox_size/4,0,0) // behind camera
+          // directionalLight(0,255,0, 0,0,skybox_size/4) // left of camera
+          // directionalLight(0,0,255, 0,0,-skybox_size/4) // right of camera
+          // directionalLight(0,255,255, 0,skybox_size/4,0) // top of camera
+
+          //color, position, direction of light, angle and concentration.
+          //spotLight(v1, v2, v3, x, y, z, rx, ry, rz, [angle], [conc])
+          // spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
+          // spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
+          // spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
+          // spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
+
+          if (!camera_y_lock) {
+
+            directionalLight(255,0,0, skybox_size/4,0,0) // behind camera
+            directionalLight(0,255,0, 0,0,skybox_size/4) // left of camera
+            directionalLight(0,0,255, 0,0,-skybox_size/4) // right of camera
+            directionalLight(0,255,255, 0,skybox_size/4,0) // top of camera
+
+          } else {
+
+            spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
+            spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
+            spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
+            spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
+
+          }
+
+          stroke(0)
+          fill(255)//0)
+          box(skybox_size)
 
           push()
-          translate(100,0,0)
+          translate(100, 0, 0)
+          stroke(0)
+          fill(255)
           box(50)
           pop()
+
+          push()
+          translate(200, 0, 100)
+          stroke(0)
+          fill(255)
+          box(50)
+          pop()
+
+          push()
+          translate(300, 0, -100)
+          stroke(0)
+          fill(255)
+          box(50)
+          pop()
+
+          if (camera_y_lock) {
+            if (Math.abs(cam.position.y) <= floor_epsilon) cam.position.y = 0
+            else cam.position.y /=1.016
+          }
+          else if (!camera_y_lock) {
+            if (cam.position.y > skybox_size/4) cam.position.y = skybox_size/4
+            else if (cam.position.y < -skybox_size/4) cam.position.y = -skybox_size/4
+          }
+          if (cam.position.x > skybox_size/4) cam.position.x = skybox_size/4
+          else if (cam.position.x < -skybox_size/4) cam.position.x = -skybox_size/4
+          if (cam.position.z > skybox_size/4) cam.position.z = skybox_size/4
+          else if (cam.position.z < -skybox_size/4) cam.position.z = -skybox_size/4
+
+        }
+
+        this.onkeypress = function(event) {
+
+          switch(event.keyCode) {
+
+            case 13: // enter
+              break
+
+            case 32: // space
+              camera_y_lock = !camera_y_lock
+              break
+
+            //default: alert(event.keyCode)
+
+          }
 
         }
 
