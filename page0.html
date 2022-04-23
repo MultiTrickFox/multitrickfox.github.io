@@ -13,15 +13,22 @@
           margin: 0;
           height: 100%;
           width: 100%;
-          justify-content: center;  
+          justify-content: center;
+          align-items: center;
           cursor: wait;               
           ">
       
       <script>
 
+        var canvas
+        var cam
+
         function setup() {
 
-          createCanvas(400, 400)
+          canvas = createCanvas(windowHeight, windowHeight, WEBGL)
+          canvas.position((windowWidth-windowHeight)/2,0)
+          
+          //cam = createEasyCam()
 
           document.body.style.cursor = 'auto'
 
@@ -29,7 +36,7 @@
 
         function draw() {
 
-          background(220)
+          background(250)
           
         }
 
