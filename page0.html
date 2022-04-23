@@ -80,21 +80,10 @@
           // spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
           // spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
 
-          if (!camera_y_lock) {
-
-            directionalLight(255,0,0, skybox_size/4,0,0) // behind camera
-            directionalLight(0,255,0, 0,0,skybox_size/4) // left of camera
-            directionalLight(0,0,255, 0,0,-skybox_size/4) // right of camera
-            directionalLight(0,255,255, 0,skybox_size/4,0) // top of camera
-
-          } else {
-
-            spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
-            spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
-            spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
-            spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
-
-          }
+          spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
+          spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
+          spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
+          spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
 
           stroke(0)
           fill(255)//0)
