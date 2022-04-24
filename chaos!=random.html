@@ -68,16 +68,25 @@
           spotLight(255,0,0, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
           spotLight(255,255,0, 0,skybox_size,0, 0,-1,0, Math.PI/2, 255) // bot of camera
 
-          stroke(0)
+          noStroke()
           fill(255)//0)
           box(skybox_size)
 
           for (var i = 0; i < box_locations.length; i++) {
             push()
             translate(box_locations[i][0], box_locations[i][1], box_locations[i][2])
+
             stroke(0)
-            fill(255)
+
+            //fill(255)
+            //normalMaterial()
+            //ambientMaterial(255)
+            specularMaterial(255,255,255, 255)//255*.77)
+            shininess(10)
+
             box(box_size)
+            // sphere(box_size/2)
+
             pop()
           }
 
