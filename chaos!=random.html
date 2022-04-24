@@ -1,11 +1,9 @@
 <html>
 
     <head>
-      <title>MultiTrickFox's Space</title>
+      <title>Chaos != Random</title>
       <link rel="icon" type="image/x-icon" href="favicon.png">
       <script src="libs/p5.js"></script>
-      <!-- <script src="libs/p5.sound.js"></script> -->
-      <script src="libs/p5.easycam.js"></script>
       <script src="libs/p5.rovercam.js"></script>
     </head>
 
@@ -33,6 +31,14 @@
         const floor_epsilon = .8
         var camera_y_lock = true
 
+        const hm_lights = 3
+        var lights_theta = []
+        var lights_phi = []
+        var lights_r = []
+        var lights_hue = []
+        var t = 0
+        const t_delta = .1
+
         var canvas
         var cam
 
@@ -40,6 +46,7 @@
   
           setAttributes('antialias', true)
           pixelDensity(1)
+          //colorMode(HSB, 360)
 
           canvas = createCanvas(windowWidth, windowHeight, WEBGL)
           canvas.position((windowWidth-width)/2,0)
@@ -54,6 +61,15 @@
             speed: .2,
           })
 
+          for (var i = 0; i < hm_lights; i++) {
+
+            lights_theta.push(random(-1,1)*Math.PI*2)
+            lights_phi.push(random(-1,1)*Math.PI*2)
+            lights_r.push(skybox_size)//random(-1,1)*skybox_size/2)
+            lights_hue.push(random()*360)
+
+          }
+
           document.body.style.cursor = 'auto'
 
         }
@@ -62,10 +78,28 @@
 
           background(0)
 
-          spotLight(255,0,0, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
-          spotLight(0,255,0, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
-          spotLight(0,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
-          spotLight(0,255,255, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
+          for (var i = 0; i < hm_lights; i++) {
+
+            let x = lights_r[i] * sin(lights_phi[i]) * cos(lights_theta[i])
+            let y = lights_r[i] * sin(lights_phi[i]) * sin(lights_theta[i])
+            let z = lights_r[i] * cos(lights_phi[i])
+
+            //spotLight(lights_hue[i],255,255, x,y,z, x<0?1:-1,y<0?1:-1,z<0?1:-1, Math.PI/2, 255)
+
+            // lights_theta[i] += random(-1,1)*Math.PI*2
+            // lights_phi[i] += random(-1,1)*Math.PI*2
+            // lights_r[i] += skybox_size//random(-1,1)*skybox_size/2)
+            // lights_hue[i] += random()*360)
+
+          }
+
+          t +=t_delta
+
+          spotLight(0,0,255, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
+          spotLight(0,255,255, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
+          spotLight(255,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
+
+          spotLight(255,0,0, 0,-skybox_size,0, 0,1,0, Math.PI/2, 255) // top of camera
           spotLight(255,255,0, 0,skybox_size,0, 0,-1,0, Math.PI/2, 255) // bot of camera
 
           stroke(0)
