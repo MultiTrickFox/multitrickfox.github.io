@@ -110,7 +110,7 @@
 
             for (var i = 0; i < buttons.length; i++) buttons[i].style.opacity = 
               1 - Math.sqrt(
-                Math.pow(event.clientX - buttons[i].offsetLeft+buttons[i].offsetWidth/2, 2) + 
+                Math.pow(event.clientX - buttons[i].offsetLeft, 2) + 
                 Math.pow(event.clientY - buttons[i].offsetTop+buttons[i].offsetHeight/2, 2)
               ) / (Math.max(window.innerHeight, window.innerWidth) - 3*window.innerWidth/5)
 
