@@ -2,7 +2,7 @@
 
     <head>
       <title>Chaos != Random</title>
-      <link rel="icon" type="image/x-icon" href="favicon.png">
+      <link rel="icon" type="image/x-icon" href="assets/favicon.png">
       <script src="libs/p5.js"></script>
       <script src="libs/p5.rovercam.js"></script>
     </head>
@@ -23,7 +23,7 @@
 
         const box_size = 50
         const box_locations = [
-          [100, 0, 0],
+          [400, 0, 0],
           [200, 0, 100],
           [300, 0, -100],
         ]
@@ -38,6 +38,7 @@
   
           setAttributes('antialias', true)
           pixelDensity(1)
+          frameRate(50)
           //colorMode(HSB, 360)
 
           canvas = createCanvas(windowWidth, windowHeight, WEBGL)
@@ -47,7 +48,7 @@
           cam = createRoverCam()
           cam.usePointerLock()
           cam.setState({
-            position: [0,0,0],
+            position: [-skybox_size/2,0,0],
             rotation: [0,0,0],
             sensitivity: 0.006,
             speed: .2,
@@ -59,9 +60,11 @@
 
         function draw() {
 
+          // console.log(frameRate())
+
           background(0)
 
-          spotLight(0,0,255, -skybox_size,0,0, 1,0,0, Math.PI/2, 255) // behind camera
+          spotLight(0,0,255, skybox_size,0,0, -1,0,0, Math.PI/2, 255) // front of camera
           spotLight(0,255,255, 0,0,-skybox_size, 0,0,1, Math.PI/2, 255) // left of camera
           spotLight(255,0,255, 0,0,skybox_size, 0,0,-1, Math.PI/2, 255) // right of camera
 
@@ -69,23 +72,39 @@
           spotLight(255,255,0, 0,skybox_size,0, 0,-1,0, Math.PI/2, 255) // bot of camera
 
           noStroke()
-          fill(255)//0)
+          fill(255)
           box(skybox_size)
 
           for (var i = 0; i < box_locations.length; i++) {
+
             push()
             translate(box_locations[i][0], box_locations[i][1], box_locations[i][2])
 
             stroke(0)
-
-            //fill(255)
-            //normalMaterial()
-            //ambientMaterial(255)
-            specularMaterial(255,255,255, 255)//255*.77)
+   
+            specularMaterial(255,255,255, 255*.5)//255*.77)
             shininess(10)
 
             box(box_size)
-            // sphere(box_size/2)
+
+            pop()
+
+          }
+
+          let history_count = chaotic_histories[0].length
+
+          for (var i = 0; i < chaotic_boxsizes.length; i++) {
+            push()
+            translate(chaotic_translaters[0][0], chaotic_translaters[0][1], chaotic_translaters[0][2])
+
+            for (var ii = 0; ii < history_count; ii++) {
+              push()
+              translate(chaotic_histories[i][ii][0]*chaotic_scalers[i], chaotic_histories[i][ii][1]*chaotic_scalers[i], chaotic_histories[i][ii][2]*chaotic_scalers[i])
+
+              box(chaotic_boxsizes[i])
+
+              pop()
+            }
 
             pop()
           }
@@ -103,6 +122,8 @@
           if (cam.position.z > skybox_size/4) cam.position.z = skybox_size/4
           else if (cam.position.z < -skybox_size/4) cam.position.z = -skybox_size/4
           
+          dt_()
+
         }
 
         this.onkeypress = function(event) {
@@ -120,6 +141,86 @@
 
           }
 
+        }
+
+        var chaotic_boxsizes = [.2, .6, .6, .6, .6]//, .6]
+        var chaotic_translaters = [[8,8,-27], [-.1,-.1,-.1], [-.1,-.1,-.1], [-.1,-.1,-.1], [-.1,-.1,-.1]]//, [-.06,-.06,-.07]]
+        var chaotic_scalers = [1,110,50,20,10,20]
+        var chaotic_dts = [.003,.004,.0077,.0025,.005,.01]
+        var chaotic_histories = [
+          [[-8,-8,27]],
+          [[.1,.1,.1]],
+          [[.1,.1,.1]],
+          [[-1,1,-1]],
+          [[.1,.1,.1]],
+          //[[.02,.05,.06]]
+        ]
+        const max_history = 250
+        for (let i = 0; i < chaotic_dts.length-1; i++) chaotic_histories.push([[Math.random(.1),Math.random(.1),Math.random(.1)]])
+        var x, y, z, dx, dy, dz, dt
+
+        function dt_() {
+
+          let history_count = chaotic_histories[0].length
+
+          x = chaotic_histories[0][history_count-1][0]
+          y = chaotic_histories[0][history_count-1][1]
+          z = chaotic_histories[0][history_count-1][2]
+          dx = 10 * (y - x)
+          dy = x * (28 - z) - y 
+          dz = x * y - 8.0/3 * z
+          dt = chaotic_dts[0]
+          chaotic_histories[0].push([x+dx*dt,y+dy*dt,z+dz*dt])
+
+          x = chaotic_histories[1][history_count-1][0]
+          y = chaotic_histories[1][history_count-1][1]
+          z = chaotic_histories[1][history_count-1][2]
+          dx = (z - .7) * x - 3.5 * y
+          dy = 3.5 * x + (z - .7) * y
+          dz = .6 + .95 * z - Math.pow(z,3) / 3 - (Math.pow(x,2) + Math.pow(y,2)) * (1 + .25 * z) + .1 * z * Math.pow(x,3)
+          dt = chaotic_dts[1]
+          chaotic_histories[1].push([x+dx*dt,y+dy*dt,z+dz*dt])
+
+          x = chaotic_histories[2][history_count-1][0]
+          y = chaotic_histories[2][history_count-1][1]
+          z = chaotic_histories[2][history_count-1][2]
+          dx = y
+          dy = y * z - x
+          dz = 1.5 - Math.pow(y,2)
+          dt = chaotic_dts[2]
+          chaotic_histories[2].push([x+dx*dt,y+dy*dt,z+dz*dt])
+
+          x = chaotic_histories[3][history_count-1][0]
+          y = chaotic_histories[3][history_count-1][1]
+          z = chaotic_histories[3][history_count-1][2]
+          dx = -1.4 * x - 4 * (y + z) - Math.pow(y,2)
+          dy = -1.4 * y - 4 * (z + x) - Math.pow(z,2)
+          dz = -1.4 * z - 4 * (x + y) - Math.pow(x,2)
+          dt = chaotic_dts[3]
+          chaotic_histories[3].push([x+dx*dt,y+dy*dt,z+dz*dt])
+
+          x = chaotic_histories[4][history_count-1][0]
+          y = chaotic_histories[4][history_count-1][1]
+          z = chaotic_histories[4][history_count-1][2]
+          dx = x * (4 - y) + z
+          dy = -y * (1 - Math.pow(x,2))
+          dz = -x * (1.4 - 2.8 * z) - z
+          dt = chaotic_dts[4]
+          chaotic_histories[4].push([x+dx*dt,y+dy*dt,z+dz*dt])
+
+          x = chaotic_histories[5][history_count-1][0]
+          y = chaotic_histories[5][history_count-1][1]
+          z = chaotic_histories[5][history_count-1][2]
+          dx = .1 * z - x * (1 - y)
+          dy = y * (1 - pow(x,2))
+          dz = -.1 * x - 1 * z * (1- y)
+          dt = chaotic_dts[5]
+          chaotic_histories[5].push([x+dx*dt,y+dy*dt,z+dz*dt])
+
+          for (var i = 0; i < chaotic_histories.length; i++) {
+            if (chaotic_histories[i].length > max_history) chaotic_histories[i] = chaotic_histories[i].splice(1,max_history+1)
+          }
+          
         }
 
       </script>
