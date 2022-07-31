@@ -89,7 +89,7 @@
           if (waiting_after_loading) {
             waiting_after_loading = false
             audio.play()
-            //for (var i = 0; i < buttons.length; i++) document.body.appendChild(buttons[i])
+            for (var i = 0; i < buttons.length; i++) document.body.appendChild(buttons[i])
           }  
 
         }
@@ -120,70 +120,70 @@
 
         var buttons = [
           {
-            text: 'Chaos != Random',
+            text: 'WebShrine',
             onclick: function() {
               document.body.style.cursor = 'wait'
               setInterval(function transition() {
                 audio.volume /= 2
                 if (audio.volume < .1)
                   //window.open('chaos!=random.html', '_blank');
-                  window.location.href = 'chaos!=random.html'
+                  window.location.href = 'WebShrine/index.html'
               }, 426)
             }
           },
-          {
-            text: 'Button N-2',
-            onclick: function() {
-            }
-          },
-          {
-            text: 'Button N-1',
-            onclick: function() {
-            }
-          },
-          {
-            text: 'About',
-            onclick: function() {
-              if (!about_active) {
-                about_active = true
-                use_alternate_chars = !use_alternate_chars
-                about_text_ctr = 0
-                about_box = document.createElement('div')
-                document.body.appendChild(about_box)
-                about_box.style.position = 'absolute'
-                about_box.style.top = '50%'
-                about_box.style.left = '50%'
-                about_box.style.transform = 'translate(-50%, -50%)'
-                about_box.style.width = window.innerWidth/2
-                about_box.style.height = window.innerHeight*3/4
-                about_box.style.backgroundColor = 'transparent'
-                about_box.style.border = 'none'
-                about_box.style.fontFamily = 'American Typewriter'
-                about_box.style.fontSize = '11pt'
-                about_box.style.textAlign = 'center'
-                about_box.style.color = color
-                about_box.style.opacity = .5
-                setInterval(function () { about_box.style.color = color }, 300)
-                if (!about_run_once) {
-                  about_run_once = true
-                  setInterval(function () {
-                    if (!about_active || about_text_ctr >= about_text.length) return
-                    next = about_text[about_text_ctr]
-                    switch (next) {
-                      case '*': next = '<br>'; break;
-                      case '+': next = '   '; break;
-                    }
-                    about_box.innerHTML +=next
-                    about_text_ctr +=1
-                  }, 66)
-                }
-              } else {
-                about_active = false
-                use_alternate_chars = !use_alternate_chars
-                document.body.removeChild(about_box)
-              }
-            }
-          },
+          // {
+          //   text: 'Button N-2',
+          //   onclick: function() {
+          //   }
+          // },
+          // {
+          //   text: 'Button N-1',
+          //   onclick: function() {
+          //   }
+          // },
+          // {
+          //   text: 'About',
+          //   onclick: function() {
+          //     if (!about_active) {
+          //       about_active = true
+          //       use_alternate_chars = !use_alternate_chars
+          //       about_text_ctr = 0
+          //       about_box = document.createElement('div')
+          //       document.body.appendChild(about_box)
+          //       about_box.style.position = 'absolute'
+          //       about_box.style.top = '50%'
+          //       about_box.style.left = '50%'
+          //       about_box.style.transform = 'translate(-50%, -50%)'
+          //       about_box.style.width = window.innerWidth/2
+          //       about_box.style.height = window.innerHeight*3/4
+          //       about_box.style.backgroundColor = 'transparent'
+          //       about_box.style.border = 'none'
+          //       about_box.style.fontFamily = 'American Typewriter'
+          //       about_box.style.fontSize = '11pt'
+          //       about_box.style.textAlign = 'center'
+          //       about_box.style.color = color
+          //       about_box.style.opacity = .5
+          //       setInterval(function () { about_box.style.color = color }, 300)
+          //       if (!about_run_once) {
+          //         about_run_once = true
+          //         setInterval(function () {
+          //           if (!about_active || about_text_ctr >= about_text.length) return
+          //           next = about_text[about_text_ctr]
+          //           switch (next) {
+          //             case '*': next = '<br>'; break;
+          //             case '+': next = '   '; break;
+          //           }
+          //           about_box.innerHTML +=next
+          //           about_text_ctr +=1
+          //         }, 66)
+          //       }
+          //     } else {
+          //       about_active = false
+          //       use_alternate_chars = !use_alternate_chars
+          //       document.body.removeChild(about_box)
+          //     }
+          //   }
+          // },
         ]
 
         for (var i = 0; i < buttons.length; i++) {
@@ -226,11 +226,11 @@
 
         }
       
-        const about_text = 'MultiTrickFox***Computer Scientist*Software Engineer****Fields**+Self Learning Architectures*+Mathematical Simulations*+Quantum Programming*+Time Series Analysis*+Procedural Art***Languages**+Julia*+Python*+Java, Processing, Android*+Lisp, Racket*+Holy C, C*+Assembly*****Contact**+github: multitrickfox*+discord: multitrickfox#3611'
-        var about_box
-        var about_active = false
-        var about_text_ctr
-        var about_run_once = false
+        // const about_text = 'MultiTrickFox***Computer Scientist*Software Engineer****Fields**+Self Learning Architectures*+Mathematical Simulations*+Quantum Programming*+Time Series Analysis*+Procedural Art***Languages**+Julia*+Python*+Java, Processing, Android*+Lisp, Racket*+Holy C, C*+Assembly*****Contact**+github: multitrickfox*+discord: multitrickfox#3611'
+        // var about_box
+        // var about_active = false
+        // var about_text_ctr
+        // var about_run_once = false
 
         var use_alternate_chars = Math.random() < .2
 
