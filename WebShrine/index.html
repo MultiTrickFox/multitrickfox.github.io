@@ -21,7 +21,32 @@
         <script src="3js/geometries/TextGeometry.js"></script>
         
         <script> 
-            const sleep = sec => new Promise(r => setTimeout(r, sec*1_000)) 
+            const sleep = sec => new Promise(r => setTimeout(r, sec*1_000))
+
+            const camera_placings = [
+                [1.0066544111402496, -0.08902988937746323, -10.828732975955903, 0.017285800040492433, -0.2468450125445477, 0.004106891538857817],
+                [0.9001129996291835, -0.44667495571716836, -12.726222640853901, 0.10841063274123983, -0.17786858959131863, 0.01925445144624984],
+                [1.827566140670746, -0.40457597671216744, -13.384445504435558, 0.04315208464779503, -0.0878911038220728, 0.003790137950046403],
+                [2.0774814900953604, -0.34813245469953147, -15.206418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
+                [2.0774814900953604, -0.34813245469953147, -15.466418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
+            ]
+            function place_camera(camera_placing) {
+                camera.position.x = camera_placing[0]
+                camera.position.y = camera_placing[1] 
+                camera.position.z = camera_placing[2] 
+                camera.rotation.x = camera_placing[3] 
+                camera.rotation.y = camera_placing[4] 
+                camera.rotation.z = camera_placing[5] 
+            }
+            function displace_camera(camera_placing) {
+                camera.position.x += camera_placing[0]
+                camera.position.y += camera_placing[1] 
+                camera.position.z += camera_placing[2] 
+                camera.rotation.x += camera_placing[3] 
+                camera.rotation.y += camera_placing[4] 
+                camera.rotation.z += camera_placing[5] 
+            }
+
         </script>
 
 		<script>
@@ -33,11 +58,7 @@
 			const scene = new THREE.Scene()
 
 			const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000)
-            camera.rotateY(-1.7)
-            camera.position.x = 15.6
-            camera.position.z = 1.766
-            camera.position.y = -.16
-            camera.rotateY(-.126)
+            place_camera(camera_placings[0])
 
             // const controls = new THREE.OrbitControls(camera, renderer.domElement)
             // controls.minDistance = 0
@@ -45,16 +66,11 @@
 
             const controls = new THREE.FirstPersonControls(camera, renderer.domElement)
             controls.movementSpeed = 0
-            controls.lookSpeed = 0.06
-            controls.verticalMax = Math.PI*3/4
-            controls.verticalMin = Math.PI/4
+            controls.lookSpeed = 0
 
             const light = new THREE.AmbientLight()
             light.castShadow = true
             scene.add(light)
-            // const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            // ambientLight.castShadow = true
-            // scene.add(ambientLight)
 
 			// const geometry = new THREE.BoxGeometry( 1, 1, 1 )
 			// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
@@ -63,35 +79,35 @@
 
             const loader = new THREE.GLTFLoader()
 
+            var model_shrine
             loader.load('shrine.glb', function ( gltf ) {
-                const model = gltf.scene
-                scene.add(model)
+                model_shrine = gltf.scene
+                model_shrine.rotateY(Math.PI/2)
+                scene.add(model_shrine)
             })
 
-            loader.load('stairs.glb', function ( gltf ) {
-                const model = gltf.scene
-                model.rotateY(-45)
-                model.position.y = -6
-                model.position.x = -18.6
-                model.position.z = -2.8
-                scene.add(model)
-            })
+            // var model_stairs
+            // loader.load('stairs.glb', function ( gltf ) {
+            //     model_stairs = gltf.scene
+            //     model_stairs.rotateY(-45)
+            //     model_stairs.position.y = -6
+            //     model_stairs.position.x = -18.6
+            //     model_stairs.position.z = -2.8
+            //     scene.add(model_stairs)
+            // })
 
+            var model_spirit
             loader.load('spirit.glb', function ( gltf ) {
-                const model = gltf.scene
-                model.position.x = 18.6
-                model.position.z = 2.62
-                model.position.y = -1.2
-                model.rotateX(Math.PI/2)
-                model.rotateZ(Math.PI/2+Math.PI/16)
-
-                mixer = new THREE.AnimationMixer( model );
+                model_spirit = gltf.scene
+                model_spirit.position.x = 18.6
+                model_spirit.position.z = 2.62
+                model_spirit.position.y = -1.2
+                model_spirit.rotateX(Math.PI/2)
+                model_spirit.rotateZ(Math.PI/2+Math.PI/16)
+                //scene.add(model_spirit)
+                mixer = new THREE.AnimationMixer( model_spirit );
 				mixer.clipAction( gltf.animations[ 2 ] ).play();
-
-                scene.add(model)
-
             })
-
             
             const clock = new THREE.Clock()
 
@@ -108,15 +124,15 @@
                 controls.update(delta)
 
                 //renderer.clear()
-
 				renderer.render(scene, camera)
+
+                console.log(camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z + ' xx ' + camera.rotation.x + ' ' + camera.rotation.y + ' ' + camera.rotation.z)
 
             } update()
 
             const font_loader = new THREE.FontLoader()
 
             font_loader.load( 'fonts/droid/droid_serif_regular.typeface.json', function ( font ) {
-
                 const geometry = new THREE.TextGeometry( 'Hello world!', {
                     font: font,
                     size: 8,
@@ -128,20 +144,173 @@
                     // bevelOffset: 0,
                     // bevelSegments: 5
                 } )
-
                 const textMesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial())
-
                 textMesh.position.x = 17
-                textMesh.position.z = 2.62
+                textMesh.position.z = 2.6
                 textMesh.position.y = .2
                 textMesh.rotateY(-Math.PI/2-Math.PI/5)
                 textMesh.scale.set(.01,.01,.01)
-
                 scene.add(textMesh)
-
             } )
 
 		</script>
+
+        <script>
+
+            var username
+            var password
+            var entity_type
+
+            async function main() {
+
+                var stage_1_completed = false
+                var stage_2_completed = false
+
+                var div = document.createElement('div')
+                document.body.appendChild(div)
+                div.style.alignItems = 'center'
+                div.style.justifyContent = 'center'
+                div.style.position = 'absolute'
+                div.style.top = '50%'
+                div.style.left = '50%'
+                div.style.transform = 'translate(-50%, -50%)'
+                
+                var button_login = document.createElement('button')
+                button_login.innerHTML = 'Login'
+                button_login.style.color = 'white'
+                button_login.style.padding = '44px'
+                button_login.style.background = '#3c3c3c6b'
+                button_login.style.border = 'solid 1px white'
+                button_login.style.borderRadius = '10px'
+                button_login.style.outline = 'none'
+                button_login.style.fontFamily = 'Courier New'
+                button_login.style.fontSize = '16px'
+                button_login.onclick = () => {
+                    // TODO: do me
+                }
+                
+                var button_empty = document.createElement('button')
+                button_empty.innerHTML = ''
+                button_empty.style.color = 'white'
+                button_empty.style.padding = '16px'
+                button_empty.style.backgroundColor = 'transparent'
+                button_empty.style.border = 'none'
+                button_empty.style.outline = 'none'
+                button_empty.style.fontSize = '16px'
+                
+                var button_guest = document.createElement('button')
+                button_guest.innerHTML = 'Guest'
+                button_guest.style.color = 'white'
+                button_guest.style.padding = '44px'
+                button_guest.style.background = '#3c3c3c6b'
+                button_guest.style.border = 'solid 1px white'
+                button_guest.style.borderRadius = '10px'
+                button_guest.style.outline = 'none'
+                button_guest.style.fontFamily = 'Courier New'
+                button_guest.style.fontSize = '16px'
+                button_guest.onclick = () => {
+                    stage_1_completed = true
+                }
+
+                div.appendChild(button_login)
+                div.appendChild(button_empty)
+                div.appendChild(button_guest)
+
+                while (!stage_1_completed) await sleep(.1)
+
+                div.removeChild(button_login)
+                div.removeChild(button_empty)
+                div.removeChild(button_guest)
+
+                var seconds = 2
+
+                for (let i = 0; i < camera_placings.length; i++) {
+                    place_camera(camera_placings[i])
+                    await sleep(seconds/camera_placings.length)
+                }
+
+                scene.add(model_spirit)
+
+                var button_entity1 = document.createElement('button')
+                button_entity1.innerHTML = 'Entity 1'
+                button_entity1.style.color = 'white'
+                button_entity1.style.padding = '44px'
+                button_entity1.style.background = '#3c3c3c6b'
+                button_entity1.style.border = 'solid 1px white'
+                button_entity1.style.borderRadius = '10px'
+                button_entity1.style.outline = 'none'
+                button_entity1.style.fontFamily = 'Courier New'
+                button_entity1.style.fontSize = '16px'
+                button_entity1.onclick = () => {
+                    entity_type = 0
+                    stage_2_completed = true
+                }
+                
+                var button_empty = document.createElement('button')
+                button_empty.innerHTML = ''
+                button_empty.style.color = 'white'
+                button_empty.style.padding = '16px'
+                button_empty.style.backgroundColor = 'transparent'
+                button_empty.style.border = 'none'
+                button_empty.style.outline = 'none'
+                button_empty.style.fontSize = '16px'
+                
+                var button_entity2 = document.createElement('button')
+                button_entity2.innerHTML = 'Entity 2'
+                button_entity2.style.color = 'white'
+                button_entity2.style.padding = '44px'
+                button_entity2.style.background = '#3c3c3c6b'
+                button_entity2.style.border = 'solid 1px white'
+                button_entity2.style.borderRadius = '10px'
+                button_entity2.style.outline = 'none'
+                button_entity2.style.fontFamily = 'Courier New'
+                button_entity2.style.fontSize = '16px'
+                button_entity2.onclick = () => {
+                    entity_type = 1
+                    stage_2_completed = true
+                }
+
+                var button_empty2 = document.createElement('button')
+                button_empty2.innerHTML = ''
+                button_empty2.style.color = 'white'
+                button_empty2.style.padding = '16px'
+                button_empty2.style.backgroundColor = 'transparent'
+                button_empty2.style.border = 'none'
+                button_empty2.style.outline = 'none'
+                button_empty2.style.fontSize = '16px'
+
+                var button_entity3 = document.createElement('button')
+                button_entity3.innerHTML = 'Entity 3'
+                button_entity3.style.color = 'white'
+                button_entity3.style.padding = '44px'
+                button_entity3.style.background = '#3c3c3c6b'
+                button_entity3.style.border = 'solid 1px white'
+                button_entity3.style.borderRadius = '10px'
+                button_entity3.style.outline = 'none'
+                button_entity3.style.fontFamily = 'Courier New'
+                button_entity3.style.fontSize = '16px'
+                button_entity3.onclick = () => {
+                    entity_type = 2
+                    stage_2_completed = true
+                }
+                
+                div.appendChild(button_entity1)
+                div.appendChild(button_empty)
+                div.appendChild(button_entity2)
+                div.appendChild(button_empty2)
+                div.appendChild(button_entity3)
+
+                while (!stage_2_completed) await sleep(.1)
+
+                div.removeChild(button_entity1)
+                div.removeChild(button_empty)
+                div.removeChild(button_entity2)
+                div.removeChild(button_empty2)
+                div.removeChild(button_entity3)
+
+            } main()
+
+        </script>
 
 	</body>
 
