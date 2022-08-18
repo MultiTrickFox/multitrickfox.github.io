@@ -122,7 +122,7 @@
                 //renderer.clear()
 				renderer.render(scene, camera)
 
-                console.log(camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z + ' xx ' + camera.rotation.x + ' ' + camera.rotation.y + ' ' + camera.rotation.z)
+                // console.log(camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z + ' xx ' + camera.rotation.x + ' ' + camera.rotation.y + ' ' + camera.rotation.z)
 
             } update()
 
@@ -172,18 +172,48 @@
                 div.style.transform = 'translate(-50%, -50%)'
                 
                 var button_login = document.createElement('button')
+                var login_mouseover = false
                 button_login.innerHTML = 'Login'
                 button_login.style.color = 'white'
                 button_login.style.padding = '44px'
-                button_login.style.background = '#3c3c3c6b'
-                button_login.style.border = 'solid 1px white'
+                button_login.style.border = 'none' //'solid 1px white'
                 button_login.style.borderRadius = '10px'
                 button_login.style.outline = 'none'
                 button_login.style.fontFamily = 'Courier New'
                 button_login.style.fontSize = '16px'
+                button_login.style.backgroundColor = 'rgba(0,0,0,.44)'
                 button_login.onclick = () => {
                     // TODO: do me
                 }
+                button_login.onmouseenter = () => {
+                    login_mouseover = true
+                    button_login.style.cursor = 'pointer'
+                    const work = async () => {
+                        var opacity = parseFloat(button_login.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_login.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .66 ? .66 : opacity).toString()+')'
+                            opacity += .02666
+                            await sleep(.1)
+                            if (!login_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                button_login.onmouseleave = function() {
+                    login_mouseover = false
+                    document.body.style.cursor = 'auto'
+                    const work = async () => {
+                        var opacity = parseFloat(button_login.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_login.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                            opacity -= .02666
+                            await sleep(.1)
+                            if (login_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                
                 
                 var button_empty = document.createElement('button')
                 button_empty.innerHTML = ''
@@ -195,17 +225,46 @@
                 button_empty.style.fontSize = '16px'
                 
                 var button_guest = document.createElement('button')
+                var guest_mouseover = false
                 button_guest.innerHTML = 'Guest'
                 button_guest.style.color = 'white'
                 button_guest.style.padding = '44px'
-                button_guest.style.background = '#3c3c3c6b'
-                button_guest.style.border = 'solid 1px white'
+                button_guest.style.border = 'none' //'solid 1px white'
                 button_guest.style.borderRadius = '10px'
                 button_guest.style.outline = 'none'
                 button_guest.style.fontFamily = 'Courier New'
                 button_guest.style.fontSize = '16px'
+                button_guest.style.backgroundColor = 'rgba(0,0,0,.44)'
                 button_guest.onclick = () => {
                     stage_1_completed = true
+                }
+                button_guest.onmouseenter = () => {
+                    guest_mouseover = true
+                    button_guest.style.cursor = 'pointer'
+                    const work = async () => {
+                        var opacity = parseFloat(button_guest.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_guest.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .66 ? .66 : opacity).toString()+')'
+                            opacity += .02666
+                            await sleep(.1)
+                            if (!guest_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                button_guest.onmouseleave = function() {
+                    guest_mouseover = false
+                    document.body.style.cursor = 'auto'
+                    const work = async () => {
+                        var opacity = parseFloat(button_guest.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_guest.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                            opacity -= .02666
+                            await sleep(.1)
+                            if (guest_mouseover) return
+                        }
+                    }
+                    work()
                 }
 
                 div.appendChild(button_login)
@@ -227,18 +286,47 @@
                 place_camera(camera_placings[camera_placings.length-1])
 
                 var button_entity1 = document.createElement('button')
+                var entity1_mouseover = false
                 button_entity1.innerHTML = 'Entity 1'
                 button_entity1.style.color = 'white'
                 button_entity1.style.padding = '44px'
-                button_entity1.style.background = '#3c3c3c6b'
                 button_entity1.style.border = 'solid 1px white'
                 button_entity1.style.borderRadius = '10px'
                 button_entity1.style.outline = 'none'
                 button_entity1.style.fontFamily = 'Courier New'
                 button_entity1.style.fontSize = '16px'
+                button_entity1.style.backgroundColor = 'rgba(0,0,0,.44)'
                 button_entity1.onclick = () => {
                     entity_type = 0
                     stage_2_completed = true
+                }
+                button_entity1.onmouseenter = () => {
+                    entity1_mouseover = true
+                    button_entity1.style.cursor = 'pointer'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entity1.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                            opacity += .02666
+                            await sleep(.1)
+                            if (!entity1_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                button_entity1.onmouseleave = function() {
+                    entity1_mouseover = false
+                    document.body.style.cursor = 'auto'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entity1.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                            opacity -= .02666
+                            await sleep(.1)
+                            if (entity1_mouseover) return
+                        }
+                    }
+                    work()
                 }
                 
                 var button_empty = document.createElement('button')
@@ -251,18 +339,47 @@
                 button_empty.style.fontSize = '16px'
                 
                 var button_entity2 = document.createElement('button')
+                var entity2_mouseover = false
                 button_entity2.innerHTML = 'Entity 2'
                 button_entity2.style.color = 'white'
                 button_entity2.style.padding = '44px'
-                button_entity2.style.background = '#3c3c3c6b'
                 button_entity2.style.border = 'solid 1px white'
                 button_entity2.style.borderRadius = '10px'
                 button_entity2.style.outline = 'none'
                 button_entity2.style.fontFamily = 'Courier New'
                 button_entity2.style.fontSize = '16px'
+                button_entity2.style.backgroundColor = 'rgba(0,0,0,.44)'
                 button_entity2.onclick = () => {
                     entity_type = 1
                     stage_2_completed = true
+                }
+                button_entity2.onmouseenter = () => {
+                    entity2_mouseover = true
+                    button_entity2.style.cursor = 'pointer'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entity2.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                            opacity += .02666
+                            await sleep(.1)
+                            if (!entity2_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                button_entity2.onmouseleave = function() {
+                    entity2_mouseover = false
+                    document.body.style.cursor = 'auto'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entity2.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                            opacity -= .02666
+                            await sleep(.1)
+                            if (entity2_mouseover) return
+                        }
+                    }
+                    work()
                 }
 
                 var button_empty2 = document.createElement('button')
@@ -275,18 +392,47 @@
                 button_empty2.style.fontSize = '16px'
 
                 var button_entity3 = document.createElement('button')
+                var entity3_mouseover = false
                 button_entity3.innerHTML = 'Entity 3'
                 button_entity3.style.color = 'white'
                 button_entity3.style.padding = '44px'
-                button_entity3.style.background = '#3c3c3c6b'
                 button_entity3.style.border = 'solid 1px white'
                 button_entity3.style.borderRadius = '10px'
                 button_entity3.style.outline = 'none'
                 button_entity3.style.fontFamily = 'Courier New'
                 button_entity3.style.fontSize = '16px'
+                button_entity3.style.backgroundColor = 'rgba(0,0,0,.44)'
                 button_entity3.onclick = () => {
                     entity_type = 2
                     stage_2_completed = true
+                }
+                button_entity3.onmouseenter = () => {
+                    entity3_mouseover = true
+                    button_entity3.style.cursor = 'pointer'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entity3.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                            opacity += .02666
+                            await sleep(.1)
+                            if (!entity3_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                button_entity3.onmouseleave = function() {
+                    entity3_mouseover = false
+                    document.body.style.cursor = 'auto'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entity3.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                            opacity -= .02666
+                            await sleep(.1)
+                            if (entity3_mouseover) return
+                        }
+                    }
+                    work()
                 }
                 
                 div.appendChild(button_entity1)
