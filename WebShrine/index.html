@@ -14,6 +14,8 @@
             align-items: center;
         ">
 
+        <link rel="stylesheet" href="style.css">
+
         <script src="ThreeMin.js"></script>
         <script src="3js/loaders/GLTFLoader.js"></script>
         <script src="3js/loaders/FontLoader.js"></script>
@@ -183,7 +185,76 @@
                 button_login.style.fontSize = '16px'
                 button_login.style.backgroundColor = 'rgba(0,0,0,.44)'
                 button_login.onclick = () => {
-                    // TODO: do me
+                    div.removeChild(button_login)
+                    div.removeChild(button_empty)
+                    div.removeChild(button_guest)
+                    // TODO: do rest
+
+                    var text_username = document.createElement('input')
+                    text_username.type = 'text'
+                    text_username.placeholder = 'username'
+                    text_username.style.color = 'white'
+                    text_username.style.textAlign = 'center'
+                    text_username.style.backgroundColor = 'transparent'
+                    text_username.style.border = 'none'
+                    text_username.style.outline = 'none'
+                    text_username.style.fontSize = '14px'
+                    
+                    var text_password = document.createElement('input')
+                    text_password.type = 'password'
+                    text_password.placeholder = 'password'
+                    text_password.style.color = 'white'
+                    text_password.style.textAlign = 'center'
+                    text_password.style.backgroundColor = 'transparent'
+                    text_password.style.border = 'none'
+                    text_password.style.outline = 'none'
+                    text_password.style.fontSize = '14px'
+
+                    var button_proceed = document.createElement('button')
+                    button_proceed.innerHTML = 'Proceed'
+                    button_proceed.style.color = 'white'
+                    button_proceed.style.backgroundColor = 'transparent'
+                    button_proceed.style.border = '2px solid white'
+                    button_proceed.style.borderRadius = '20px'
+                    button_proceed.style.border = 'none'
+                    button_proceed.style.outline = 'none'
+                    button_proceed.style.fontSize = '16px'
+
+                    div.appendChild(text_username)
+                    div.appendChild(text_password)
+                    div.appendChild(button_proceed)
+
+                    button_proceed.onclick = function() {
+                        document.body.style.cursor = 'wait'
+                        if (text_username.value == '' || text_password.value == '') { 
+                            alert('Username/Password is not complete.')
+                            document.body.style.cursor = 'auto'
+                            return
+                        }
+                        async function go_fetch() {
+                            var url = 'https://lisica.lisica.ai:64243/database'
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", url, true)
+                            xhr.setRequestHeader("username", text_username.value)
+                            xhr.setRequestHeader("password", text_password.value)
+                            xhr.setRequestHeader("cmd", "check_user")
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                                    var result = JSON.parse(xhr.responseText)
+                                    if (result.answer == 'ACK.') {
+                                        username = text_username.value
+                                        password = text_password.value
+                                        div.removeChild(text_username)
+                                        div.removeChild(text_password)
+                                        div.removeChild(button_proceed)
+                                        stage_1_completed = true
+                                    } else alert('Username/Password combination invalid.')
+                                    document.body.style.cursor = 'auto'
+                                }
+                            }
+                            xhr.send()
+                        } go_fetch()
+                    }
                 }
                 button_login.onmouseenter = () => {
                     login_mouseover = true
@@ -213,7 +284,6 @@
                     }
                     work()
                 }
-                
                 
                 var button_empty = document.createElement('button')
                 button_empty.innerHTML = ''
@@ -273,9 +343,11 @@
 
                 while (!stage_1_completed) await sleep(.1)
 
-                div.removeChild(button_login)
-                div.removeChild(button_empty)
-                div.removeChild(button_guest)
+                try {
+                    div.removeChild(button_login)
+                    div.removeChild(button_empty)
+                    div.removeChild(button_guest)
+                } catch { }
 
                 var seconds = 2
 
