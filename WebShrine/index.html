@@ -28,7 +28,7 @@
                 [0.9001129996291835, -0.44667495571716836, -12.726222640853901, 0.10841063274123983, -0.17786858959131863, 0.01925445144624984],
                 [1.827566140670746, -0.40457597671216744, -13.384445504435558, 0.04315208464779503, -0.0878911038220728, 0.003790137950046403],
                 [2.0774814900953604, -0.34813245469953147, -15.206418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
-                [2.0774814900953604, -0.34813245469953147, -15.466418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
+                [1.9624814900953604, -0.34813245469953147, -15.466418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
             ]
             function place_camera(camera_placing) {
                 camera.position.x = camera_placing[0]
@@ -99,11 +99,7 @@
             var model_spirit
             loader.load('spirit.glb', function ( gltf ) {
                 model_spirit = gltf.scene
-                model_spirit.position.x = 18.6
-                model_spirit.position.z = 2.62
-                model_spirit.position.y = -1.2
                 model_spirit.rotateX(Math.PI/2)
-                model_spirit.rotateZ(Math.PI/2+Math.PI/16)
                 //scene.add(model_spirit)
                 mixer = new THREE.AnimationMixer( model_spirit );
 				mixer.clipAction( gltf.animations[ 2 ] ).play();
@@ -228,8 +224,7 @@
                     place_camera(camera_placings[i])
                     await sleep(seconds/camera_placings.length)
                 }
-
-                scene.add(model_spirit)
+                place_camera(camera_placings[camera_placings.length-1])
 
                 var button_entity1 = document.createElement('button')
                 button_entity1.innerHTML = 'Entity 1'
@@ -307,6 +302,12 @@
                 div.removeChild(button_entity2)
                 div.removeChild(button_empty2)
                 div.removeChild(button_entity3)
+
+                scene.add(model_spirit)
+                model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
+                model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
+                model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
+                model_spirit.rotateZ(Math.PI/20)
 
             } main()
 
