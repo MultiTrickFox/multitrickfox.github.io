@@ -391,11 +391,14 @@
                 }
                 place_camera(camera_placings[camera_placings.length-1])
 
+                div.style.display = 'flex'
+                div.style.flexDirection = 'column'
+
                 var button_entity1 = document.createElement('button')
                 var entity1_mouseover = false
                 button_entity1.innerHTML = 'Entity 1'
                 button_entity1.style.color = 'white'
-                button_entity1.style.padding = '44px'
+                button_entity1.style.padding = '36px'
                 button_entity1.style.border = 'none' //'solid 1px white'
                 button_entity1.style.borderRadius = '10px'
                 button_entity1.style.outline = 'none'
@@ -447,7 +450,7 @@
                 var entity2_mouseover = false
                 button_entity2.innerHTML = 'Entity 2'
                 button_entity2.style.color = 'white'
-                button_entity2.style.padding = '44px'
+                button_entity2.style.padding = '36px'
                 button_entity2.style.border = 'none' //'solid 1px white'
                 button_entity2.style.borderRadius = '10px'
                 button_entity2.style.outline = 'none'
@@ -499,7 +502,7 @@
                 var entity3_mouseover = false
                 button_entity3.innerHTML = 'Entity 3'
                 button_entity3.style.color = 'white'
-                button_entity3.style.padding = '44px'
+                button_entity3.style.padding = '36px'
                 button_entity3.style.border = 'none' //'solid 1px white'
                 button_entity3.style.borderRadius = '10px'
                 button_entity3.style.outline = 'none'
@@ -551,7 +554,7 @@
                 var entitymulti_mouseover = false
                 button_entitymulti.innerHTML = 'Entity Free Form'
                 button_entitymulti.style.color = 'white'
-                button_entitymulti.style.padding = '44px'
+                button_entitymulti.style.padding = '36px'
                 button_entitymulti.style.border = 'none' //'solid 1px white'
                 button_entitymulti.style.borderRadius = '10px'
                 button_entitymulti.style.outline = 'none'
@@ -591,14 +594,19 @@
                     work()
                 }
                 
+                div.appendChild(button_entitymulti)
+                button_entity1.style.width = button_entitymulti.offsetWidth+'px'
+                button_entity2.style.width = button_entitymulti.offsetWidth+'px'
+                button_entity3.style.width = button_entitymulti.offsetWidth+'px'
                 div.appendChild(button_entity1)
                 div.appendChild(button_empty)
                 div.appendChild(button_entity2)
                 div.appendChild(button_empty2)
                 div.appendChild(button_entity3)
                 div.appendChild(button_empty3)
+                div.removeChild(button_entitymulti)
                 div.appendChild(button_entitymulti)
-
+                
                 //const starting_pos = [controls.object.rotation.x, controls.object.rotation.y, controls.object.rotation.z]
                 controls.lookSpeed = 0 //.06
                 //console.log(controls.object.rotation) // todo rm me
