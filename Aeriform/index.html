@@ -423,7 +423,7 @@
                             button_entity1.style.fontSize = '16px'
                             button_entity1.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entity1.onclick = () => {
-                                entity_type = 0
+                                entity_type = 'the dreaming one'
                                 stage = 2
                             }
                             button_entity1.onmouseenter = () => {
@@ -475,7 +475,7 @@
                             button_entity2.style.fontSize = '16px'
                             button_entity2.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entity2.onclick = () => {
-                                entity_type = 1
+                                entity_type = 'the perplexed one'
                                 stage = 2
                             }
                             button_entity2.onmouseenter = () => {
@@ -527,7 +527,7 @@
                             button_entity3.style.fontSize = '16px'
                             button_entity3.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entity3.onclick = () => {
-                                entity_type = 2
+                                entity_type = 'the undivided one'
                                 stage = 2
                             }
                             button_entity3.onmouseenter = () => {
@@ -579,7 +579,7 @@
                             button_entitymulti.style.fontSize = '16px'
                             button_entitymulti.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entitymulti.onclick = () => {
-                                entity_type = 3
+                                entity_type = 'the obscure ones'
                                 stage = 2
                             }
                             button_entitymulti.onmouseenter = () => {
@@ -648,7 +648,22 @@
 
                             // Todo: do the entity talking thingy here
 
-                            if (entity_type!=3) {
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                            xhr.setRequestHeader("username", username)
+                            xhr.setRequestHeader("password", password)
+                            xhr.setRequestHeader("cmd", "init")
+                            xhr.setRequestHeader("template", entity_type)
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == XMLHttpRequest.DONE) {
+                                    var result = JSON.parse(xhr.responseText)
+                                    console.log(result)
+                                    document.body.style.cursor = 'auto'
+                                }
+                            }
+                            xhr.send()
+
+                            if (entity_type!='the obscure ones') {
 
                                 scene.add(model_spirit)
                                 model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
@@ -679,6 +694,7 @@
                                 reply.style.color = 'white'
                                 reply.style.backgroundColor = 'black'
                                 reply.style.outline = 'none'
+                                reply.style.border = 'none'
                                 document.body.appendChild(reply)
 
                                 var send = document.createElement('button')
@@ -693,6 +709,25 @@
                                 send.style.cursor = 'pointer'
                                 document.body.appendChild(send)
 
+                                send.onclick = () => {
+                                    xhr = new XMLHttpRequest();
+                                    xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                                    xhr.setRequestHeader("username", username)
+                                    xhr.setRequestHeader("password", password)
+                                    xhr.setRequestHeader("cmd", "generate")
+                                    xhr.setRequestHeader("reply", reply.value)
+                                    xhr.setRequestHeader("template", entity_type)
+                                    xhr.onreadystatechange = function() {
+                                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                                            var result = JSON.parse(xhr.responseText)
+                                            response.innerHTML = result.response
+                                            document.body.style.cursor = 'auto'
+                                        }
+                                    }
+                                    xhr.send()
+                                    reply.value = ''
+                                }
+
                             }
 
                             else {
@@ -700,6 +735,10 @@
                                 controls.lookSpeed = .06
                                 
                             }
+
+                            while (stage==2) await sleep(.1)
+
+                            break
 
                     }
 
