@@ -23,11 +23,11 @@
 
   @font-face {
     font-family: "Quicksand";
-    src: url("assets/Quicksand/Quicksand-Regular.ttf") format("truetype"),
-         url("assets/Quicksand/Quicksand-Bold.ttf") format("truetype"),
-         url("assets/Quicksand/Quicksand-Light.ttf") format("truetype"),
-         url("assets/Quicksand/Quicksand-Medium.ttf") format("truetype"),
-         url("assets/Quicksand/Quicksand-SemiBold.ttf") format("truetype");
+    src: url("Quicksand/Quicksand-Regular.ttf") format("truetype"),
+         url("Quicksand/Quicksand-Bold.ttf") format("truetype"),
+         url("Quicksand/Quicksand-Light.ttf") format("truetype"),
+         url("Quicksand/Quicksand-Medium.ttf") format("truetype"),
+         url("Quicksand/Quicksand-SemiBold.ttf") format("truetype");
   }
 
   /* placeholder text color */

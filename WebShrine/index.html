@@ -124,9 +124,31 @@
                 //renderer.clear()
 				renderer.render(scene, camera)
 
-                // console.log(camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z + ' xx ' + camera.rotation.x + ' ' + camera.rotation.y + ' ' + camera.rotation.z)
+                if (recording_flight) console.log(camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z + ' xx ' + camera.rotation.x + ' ' + camera.rotation.y + ' ' + camera.rotation.z)
 
             } update()
+
+            var recording_flight = false
+            document.onkeypress = (e) => {
+                var keynum;
+                if (window.event) { // IE                  
+                    keynum = e.keyCode;
+                } else if(e.which) { // Netscape/Firefox/Opera                 
+                    keynum = e.which;
+                }
+                keynum = String.fromCharCode(keynum)
+                if (keynum == 'r' || keynum == 'R') recording_flight = true
+            }
+            document.onkeyup = (e) => {
+                var keynum;
+                if (window.event) { // IE                  
+                    keynum = e.keyCode;
+                } else if(e.which) { // Netscape/Firefox/Opera                 
+                    keynum = e.which;
+                }
+                keynum = String.fromCharCode(keynum)
+                if (keynum == 'r' || keynum == 'R') recording_flight = false
+            }
 
             const font_loader = new THREE.FontLoader()
 
@@ -188,10 +210,11 @@
                     div.removeChild(button_login)
                     div.removeChild(button_empty)
                     div.removeChild(button_guest)
-                    // TODO: do rest
 
                     var text_username = document.createElement('input')
+                    div.appendChild(text_username)
                     text_username.type = 'text'
+                    text_username.style.width = '666px'
                     text_username.placeholder = 'username'
                     text_username.style.color = 'white'
                     text_username.style.textAlign = 'center'
@@ -199,9 +222,13 @@
                     text_username.style.border = 'none'
                     text_username.style.outline = 'none'
                     text_username.style.fontSize = '14px'
+                    text_username.style.fontFamily = 'Quicksand'
+                    text_username.style.backgroundColor = 'rgba(0,0,0,.44)'
                     
                     var text_password = document.createElement('input')
+                    div.appendChild(text_password)
                     text_password.type = 'password'
+                    text_password.style.width = '666px'
                     text_password.placeholder = 'password'
                     text_password.style.color = 'white'
                     text_password.style.textAlign = 'center'
@@ -209,8 +236,12 @@
                     text_password.style.border = 'none'
                     text_password.style.outline = 'none'
                     text_password.style.fontSize = '14px'
+                    text_password.style.fontFamily = 'Quicksand'
+                    text_password.style.backgroundColor = 'rgba(0,0,0,.44)'
 
                     var button_proceed = document.createElement('button')
+                    div.appendChild(button_proceed)
+                    button_proceed.style.width = '666px'
                     button_proceed.innerHTML = 'Proceed'
                     button_proceed.style.color = 'white'
                     button_proceed.style.backgroundColor = 'transparent'
@@ -219,11 +250,8 @@
                     button_proceed.style.border = 'none'
                     button_proceed.style.outline = 'none'
                     button_proceed.style.fontSize = '16px'
-
-                    div.appendChild(text_username)
-                    div.appendChild(text_password)
-                    div.appendChild(button_proceed)
-
+                    button_proceed.style.fontFamily = 'Quicksand'
+                    button_proceed.style.backgroundColor = 'rgba(0,0,0,.44)'
                     button_proceed.onclick = function() {
                         document.body.style.cursor = 'wait'
                         if (text_username.value == '' || text_password.value == '') { 
@@ -232,6 +260,7 @@
                             return
                         }
                         async function go_fetch() {
+                            document.body.style.cursor = 'wait'
                             var url = 'https://lisica.lisica.ai:64243/database'
                             var xhr = new XMLHttpRequest();
                             xhr.open("GET", url, true)
