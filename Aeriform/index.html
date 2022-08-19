@@ -221,8 +221,8 @@
                     text_username.style.backgroundColor = 'transparent'
                     text_username.style.border = 'none'
                     text_username.style.outline = 'none'
-                    text_username.style.fontSize = '18px'
-                    text_username.style.fontFamily = 'Courier New'
+                    text_username.style.fontSize = '14px'
+                    text_username.style.fontFamily = 'Quicksand'
                     text_username.style.backgroundColor = 'rgba(0,0,0,.44)'
                     text_username.style.padding = '6.66px'
                     
@@ -236,8 +236,8 @@
                     text_password.style.backgroundColor = 'transparent'
                     text_password.style.border = 'none'
                     text_password.style.outline = 'none'
-                    text_password.style.fontSize = '18px'
-                    text_password.style.fontFamily = 'Courier New'
+                    text_password.style.fontSize = '14px'
+                    text_password.style.fontFamily = 'Quicksand'
                     text_password.style.backgroundColor = 'rgba(0,0,0,.44)'
                     text_password.style.padding = '6.66px'
 
@@ -251,8 +251,8 @@
                     button_proceed.style.borderRadius = '20px'
                     button_proceed.style.border = 'none'
                     button_proceed.style.outline = 'none'
-                    button_proceed.style.fontSize = '18px'
-                    button_proceed.style.fontFamily = 'Courier New'
+                    button_proceed.style.fontSize = '16px'
+                    button_proceed.style.fontFamily = 'Quicksand'
                     button_proceed.style.backgroundColor = 'rgba(0,0,0,.44)'
                     button_proceed.style.padding = '6.66px'
 
@@ -437,6 +437,7 @@
                 var button_empty = document.createElement('button')
                 button_empty.innerHTML = ''
                 button_empty.style.color = 'white'
+                button_empty.style.padding = '16px'
                 button_empty.style.backgroundColor = 'transparent'
                 button_empty.style.border = 'none'
                 button_empty.style.outline = 'none'
@@ -489,6 +490,7 @@
                 var button_empty2 = document.createElement('button')
                 button_empty2.innerHTML = ''
                 button_empty2.style.color = 'white'
+                button_empty2.style.padding = '16px'
                 button_empty2.style.backgroundColor = 'transparent'
                 button_empty2.style.border = 'none'
                 button_empty2.style.outline = 'none'
@@ -544,13 +546,7 @@
                 div.appendChild(button_empty2)
                 div.appendChild(button_entity3)
 
-                controls.lookSpeed = .6
-                //controls.
-
                 while (!stage_2_completed) await sleep(.1)
-
-                controls.lookSpeed = 0
-                place_camera(camera_placings[camera_placings.length-1])
 
                 div.removeChild(button_entity1)
                 div.removeChild(button_empty)
@@ -572,7 +568,7 @@
 
             // Todo: do the entity talking thingy here
 
-            
+
 
         </script>
 
