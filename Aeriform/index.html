@@ -644,7 +644,7 @@
                             //place_camera(camera_placings[camera_placings.length-1])
                             // console.log(controls.object.rotation) // todo rm me
                             // if (controls.object.rotation.x!=starting_pos[0]||controls.object.rotation.y!=starting_pos[1]||controls.object.rotation.z!=starting_pos[2])
-                            // controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
+                            //controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
 
                             // Todo: do the entity talking thingy here
 
@@ -691,10 +691,11 @@
                                 reply.style.left = '50%'
                                 reply.style.textAlign = 'center'
                                 reply.style.color = 'white'
-                                reply.style.backgroundColor = 'black'
+                                reply.style.borderRadius = '16px'
+                                reply.style.backgroundColor = 'rgba(0,0,0,.666)'
                                 reply.style.outline = 'none'
                                 reply.style.border = 'none'
-                                document.body.appendChild(reply)
+                                //document.body.appendChild(reply)
 
                                 var send = document.createElement('button')
                                 send.style.position = 'absolute'
@@ -702,7 +703,9 @@
                                 send.style.left = '25%'
                                 send.style.textAlign = 'center'
                                 send.style.color = 'white'
-                                send.style.backgroundColor = 'black'
+                                send.style.padding = '6px'
+                                send.style.borderRadius = '16px'
+                                send.style.backgroundColor = 'rgba(0,0,0,.666)'
                                 send.innerHTML = 'Generate'
                                 send.style.border = 'none'
                                 send.style.cursor = 'pointer'
@@ -725,6 +728,7 @@
                                     }
                                     xhr.send()
                                     reply.value = ''
+                                    document.body.appendChild(reply)
                                 }
 
                             }
