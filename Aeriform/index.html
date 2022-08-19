@@ -152,27 +152,33 @@
             }
 
             const font_loader = new THREE.FontLoader()
+            var THREE_font
 
             font_loader.load( 'fonts/droid/droid_serif_regular.typeface.json', function ( font ) {
-                const geometry = new THREE.TextGeometry( 'Hello world!', {
-                    font: font,
-                    size: 8,
-                    height: 2,
-                    // curveSegments: 12,
-                    // bevelEnabled: true,
-                    // bevelThickness: 10,
-                    // bevelSize: 8,
-                    // bevelOffset: 0,
-                    // bevelSegments: 5
+                THREE_font = font
+            } )
+
+            function write_smt(smt, x, y, z, x_, y_, z_) {
+                var smt_ = ''
+                for (let i = 0; i < smt.length; i++) {
+                    smt_ += smt[i]
+                    if ((i+1)%48==0) smt_ += '\n'
+                }
+                const geometry = new THREE.TextGeometry( smt_, {
+                    font: THREE_font,
+                    size: 6,
+                    height: 1,
                 } )
                 const textMesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial())
-                textMesh.position.x = 17
-                textMesh.position.z = 2.6
-                textMesh.position.y = .2
-                textMesh.rotateY(-Math.PI/2-Math.PI/5)
-                textMesh.scale.set(.01,.01,.01)
+                textMesh.position.x = x
+                textMesh.position.z = z
+                textMesh.position.y = y
+                textMesh.rotation.x = x_
+                textMesh.rotation.z = z_
+                textMesh.rotation.y = y_
+                textMesh.scale.set(.016,.016,.016)
                 scene.add(textMesh)
-            } )
+            }
 
 		</script>
 
@@ -184,8 +190,7 @@
 
             async function main() {
 
-                var stage_1_completed = false
-                var stage_2_completed = false
+                var stage = 0
 
                 var div = document.createElement('div')
                 document.body.appendChild(div)
@@ -195,448 +200,508 @@
                 div.style.top = '50%'
                 div.style.left = '50%'
                 div.style.transform = 'translate(-50%, -50%)'
+
+                while (true)
+
+                    switch (stage) {
+
+                        case 0: 
                 
-                var button_login = document.createElement('button')
-                var login_mouseover = false
-                button_login.innerHTML = 'Login'
-                button_login.style.color = 'white'
-                button_login.style.padding = '44px'
-                button_login.style.border = 'none' //'solid 1px white'
-                button_login.style.borderRadius = '10px'
-                button_login.style.outline = 'none'
-                button_login.style.fontFamily = 'Courier New'
-                button_login.style.fontSize = '16px'
-                button_login.style.backgroundColor = 'rgba(0,0,0,.44)'
-                button_login.onclick = () => {
-                    div.removeChild(button_login)
-                    div.removeChild(button_empty)
-                    div.removeChild(button_guest)
+                            var button_login = document.createElement('button')
+                            var login_mouseover = false
+                            button_login.innerHTML = 'Login'
+                            button_login.style.color = 'white'
+                            button_login.style.padding = '44px'
+                            button_login.style.border = 'none' //'solid 1px white'
+                            button_login.style.borderRadius = '10px'
+                            button_login.style.outline = 'none'
+                            button_login.style.fontFamily = 'Courier New'
+                            button_login.style.fontSize = '16px'
+                            button_login.style.backgroundColor = 'rgba(0,0,0,.44)'
+                            button_login.onclick = () => {
+                                div.removeChild(button_login)
+                                div.removeChild(button_empty)
+                                div.removeChild(button_guest)
 
-                    var text_username = document.createElement('input')
-                    div.appendChild(text_username)
-                    text_username.type = 'text'
-                    text_username.style.width = '666px'
-                    text_username.placeholder = 'username'
-                    text_username.style.color = 'white'
-                    text_username.style.textAlign = 'center'
-                    text_username.style.backgroundColor = 'transparent'
-                    text_username.style.border = 'none'
-                    text_username.style.outline = 'none'
-                    text_username.style.fontSize = '18px'
-                    text_username.style.fontFamily = 'Courier New'
-                    text_username.style.backgroundColor = 'rgba(0,0,0,.44)'
-                    text_username.style.padding = '6.66px'
-                    
-                    var text_password = document.createElement('input')
-                    div.appendChild(text_password)
-                    text_password.type = 'password'
-                    text_password.style.width = '666px'
-                    text_password.placeholder = 'password'
-                    text_password.style.color = 'white'
-                    text_password.style.textAlign = 'center'
-                    text_password.style.backgroundColor = 'transparent'
-                    text_password.style.border = 'none'
-                    text_password.style.outline = 'none'
-                    text_password.style.fontSize = '18px'
-                    text_password.style.fontFamily = 'Courier New'
-                    text_password.style.backgroundColor = 'rgba(0,0,0,.44)'
-                    text_password.style.padding = '6.66px'
+                                var text_username = document.createElement('input')
+                                div.appendChild(text_username)
+                                text_username.type = 'text'
+                                text_username.style.width = '666px'
+                                text_username.placeholder = 'username'
+                                text_username.style.color = 'white'
+                                text_username.style.textAlign = 'center'
+                                text_username.style.backgroundColor = 'transparent'
+                                text_username.style.border = 'none'
+                                text_username.style.outline = 'none'
+                                text_username.style.fontSize = '18px'
+                                text_username.style.fontFamily = 'Courier New'
+                                text_username.style.backgroundColor = 'rgba(0,0,0,.44)'
+                                text_username.style.padding = '6.66px'
+                                
+                                var text_password = document.createElement('input')
+                                div.appendChild(text_password)
+                                text_password.type = 'password'
+                                text_password.style.width = '666px'
+                                text_password.placeholder = 'password'
+                                text_password.style.color = 'white'
+                                text_password.style.textAlign = 'center'
+                                text_password.style.backgroundColor = 'transparent'
+                                text_password.style.border = 'none'
+                                text_password.style.outline = 'none'
+                                text_password.style.fontSize = '18px'
+                                text_password.style.fontFamily = 'Courier New'
+                                text_password.style.backgroundColor = 'rgba(0,0,0,.44)'
+                                text_password.style.padding = '6.66px'
 
-                    var button_proceed = document.createElement('button')
-                    div.appendChild(button_proceed)
-                    button_proceed.style.width = '666px'
-                    button_proceed.innerHTML = 'Proceed'
-                    button_proceed.style.color = 'white'
-                    button_proceed.style.backgroundColor = 'transparent'
-                    button_proceed.style.border = '2px solid white'
-                    button_proceed.style.borderRadius = '20px'
-                    button_proceed.style.border = 'none'
-                    button_proceed.style.outline = 'none'
-                    button_proceed.style.fontSize = '18px'
-                    button_proceed.style.fontFamily = 'Courier New'
-                    button_proceed.style.backgroundColor = 'rgba(0,0,0,.44)'
-                    button_proceed.style.padding = '6.66px'
+                                var button_proceed = document.createElement('button')
+                                div.appendChild(button_proceed)
+                                button_proceed.style.width = '666px'
+                                button_proceed.innerHTML = 'Proceed'
+                                button_proceed.style.color = 'white'
+                                button_proceed.style.backgroundColor = 'transparent'
+                                button_proceed.style.border = '2px solid white'
+                                button_proceed.style.borderRadius = '20px'
+                                button_proceed.style.border = 'none'
+                                button_proceed.style.outline = 'none'
+                                button_proceed.style.fontSize = '18px'
+                                button_proceed.style.fontFamily = 'Courier New'
+                                button_proceed.style.backgroundColor = 'rgba(0,0,0,.44)'
+                                button_proceed.style.padding = '6.66px'
+                                button_proceed.style.cursor = 'pointer'
 
-                    button_proceed.onclick = function() {
-                        document.body.style.cursor = 'wait'
-                        if (text_username.value == '' || text_password.value == '') { 
-                            alert('Username/Password is not complete.')
-                            document.body.style.cursor = 'auto'
-                            return
-                        }
-                        async function go_fetch() {
-                            document.body.style.cursor = 'wait'
-                            var url = 'https://lisica.lisica.ai:64243/database'
-                            var xhr = new XMLHttpRequest();
-                            xhr.open("GET", url, true)
-                            xhr.setRequestHeader("username", text_username.value)
-                            xhr.setRequestHeader("password", text_password.value)
-                            xhr.setRequestHeader("cmd", "check_user")
-                            xhr.onreadystatechange = function() {
-                                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                                    var result = JSON.parse(xhr.responseText)
-                                    if (result.answer == 'ACK.') {
-                                        username = text_username.value
-                                        password = text_password.value
-                                        div.removeChild(text_username)
-                                        div.removeChild(text_password)
-                                        div.removeChild(button_proceed)
-                                        stage_1_completed = true
-                                    } else alert('Username/Password combination invalid.')
-                                    document.body.style.cursor = 'auto'
+                                button_proceed.onclick = function() {
+                                    document.body.style.cursor = 'wait'
+                                    if (text_username.value == '' || text_password.value == '') { 
+                                        alert('Username/Password is not complete.')
+                                        document.body.style.cursor = 'auto'
+                                        return
+                                    }
+                                    async function go_fetch() {
+                                        document.body.style.cursor = 'wait'
+                                        var url = 'https://lisica.lisica.ai:64243/database'
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.open("GET", url, true)
+                                        xhr.setRequestHeader("username", text_username.value)
+                                        xhr.setRequestHeader("password", text_password.value)
+                                        xhr.setRequestHeader("cmd", "check_user")
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                                                var result = JSON.parse(xhr.responseText)
+                                                if (result.answer == 'ACK.') {
+                                                    username = text_username.value
+                                                    password = text_password.value
+                                                    div.removeChild(text_username)
+                                                    div.removeChild(text_password)
+                                                    div.removeChild(button_proceed)
+                                                    stage = 1
+                                                } else alert('Username/Password combination invalid.')
+                                                document.body.style.cursor = 'auto'
+                                            }
+                                        }
+                                        xhr.send()
+                                    } go_fetch()
                                 }
                             }
-                            xhr.send()
-                        } go_fetch()
+                            button_login.onmouseenter = () => {
+                                login_mouseover = true
+                                button_login.style.cursor = 'pointer'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_login.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_login.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .66 ? .66 : opacity).toString()+')'
+                                        opacity += .02666
+                                        await sleep(.1)
+                                        if (!login_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            button_login.onmouseleave = function() {
+                                login_mouseover = false
+                                document.body.style.cursor = 'auto'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_login.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_login.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                                        opacity -= .02666
+                                        await sleep(.1)
+                                        if (login_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            
+                            var button_empty = document.createElement('button')
+                            button_empty.innerHTML = ''
+                            button_empty.style.color = 'white'
+                            button_empty.style.padding = '16px'
+                            button_empty.style.backgroundColor = 'transparent'
+                            button_empty.style.border = 'none'
+                            button_empty.style.outline = 'none'
+                            button_empty.style.fontSize = '16px'
+                            
+                            var button_guest = document.createElement('button')
+                            var guest_mouseover = false
+                            button_guest.innerHTML = 'Guest'
+                            button_guest.style.color = 'white'
+                            button_guest.style.padding = '44px'
+                            button_guest.style.border = 'none' //'solid 1px white'
+                            button_guest.style.borderRadius = '10px'
+                            button_guest.style.outline = 'none'
+                            button_guest.style.fontFamily = 'Courier New'
+                            button_guest.style.fontSize = '16px'
+                            button_guest.style.backgroundColor = 'rgba(0,0,0,.44)'
+                            button_guest.onclick = () => {
+                                stage = 1
+                            }
+                            button_guest.onmouseenter = () => {
+                                guest_mouseover = true
+                                button_guest.style.cursor = 'pointer'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_guest.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_guest.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .66 ? .66 : opacity).toString()+')'
+                                        opacity += .02666
+                                        await sleep(.1)
+                                        if (!guest_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            button_guest.onmouseleave = function() {
+                                guest_mouseover = false
+                                document.body.style.cursor = 'auto'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_guest.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_guest.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                                        opacity -= .02666
+                                        await sleep(.1)
+                                        if (guest_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+
+                            div.appendChild(button_login)
+                            div.appendChild(button_empty)
+                            div.appendChild(button_guest)
+
+                            while (stage==0) await sleep(.1)
+
+                            break
+
+                    // stage 1
+
+                        case 1:
+
+                            try {
+                                div.removeChild(button_login)
+                                div.removeChild(button_empty)
+                                div.removeChild(button_guest)
+                            } catch { }
+
+                            var seconds = 2
+                            for (let i = 0; i < camera_placings.length; i++) {
+                                place_camera(camera_placings[i])
+                                await sleep(seconds/camera_placings.length)
+                            }
+                            place_camera(camera_placings[camera_placings.length-1])
+
+                            div.style.display = 'flex'
+                            div.style.flexDirection = 'column'
+
+                            var button_entity1 = document.createElement('button')
+                            var entity1_mouseover = false
+                            button_entity1.innerHTML = 'Entity 1'
+                            button_entity1.style.color = 'white'
+                            button_entity1.style.padding = '36px'
+                            button_entity1.style.border = 'none' //'solid 1px white'
+                            button_entity1.style.borderRadius = '10px'
+                            button_entity1.style.outline = 'none'
+                            button_entity1.style.fontFamily = 'Courier New'
+                            button_entity1.style.fontSize = '16px'
+                            button_entity1.style.backgroundColor = 'rgba(0,0,0,.44)'
+                            button_entity1.onclick = () => {
+                                entity_type = 0
+                                stage = 2
+                            }
+                            button_entity1.onmouseenter = () => {
+                                entity1_mouseover = true
+                                button_entity1.style.cursor = 'pointer'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entity1.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                                        opacity += .02666
+                                        await sleep(.1)
+                                        if (!entity1_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            button_entity1.onmouseleave = function() {
+                                entity1_mouseover = false
+                                document.body.style.cursor = 'auto'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entity1.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                                        opacity -= .02666
+                                        await sleep(.1)
+                                        if (entity1_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            
+                            var button_empty = document.createElement('button')
+                            button_empty.innerHTML = ''
+                            button_empty.style.color = 'white'
+                            button_empty.style.backgroundColor = 'transparent'
+                            button_empty.style.border = 'none'
+                            button_empty.style.outline = 'none'
+                            button_empty.style.fontSize = '16px'
+                            
+                            var button_entity2 = document.createElement('button')
+                            var entity2_mouseover = false
+                            button_entity2.innerHTML = 'Entity 2'
+                            button_entity2.style.color = 'white'
+                            button_entity2.style.padding = '36px'
+                            button_entity2.style.border = 'none' //'solid 1px white'
+                            button_entity2.style.borderRadius = '10px'
+                            button_entity2.style.outline = 'none'
+                            button_entity2.style.fontFamily = 'Courier New'
+                            button_entity2.style.fontSize = '16px'
+                            button_entity2.style.backgroundColor = 'rgba(0,0,0,.44)'
+                            button_entity2.onclick = () => {
+                                entity_type = 1
+                                stage = 2
+                            }
+                            button_entity2.onmouseenter = () => {
+                                entity2_mouseover = true
+                                button_entity2.style.cursor = 'pointer'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entity2.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                                        opacity += .02666
+                                        await sleep(.1)
+                                        if (!entity2_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            button_entity2.onmouseleave = function() {
+                                entity2_mouseover = false
+                                document.body.style.cursor = 'auto'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entity2.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                                        opacity -= .02666
+                                        await sleep(.1)
+                                        if (entity2_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+
+                            var button_empty2 = document.createElement('button')
+                            button_empty2.innerHTML = ''
+                            button_empty2.style.color = 'white'
+                            button_empty2.style.backgroundColor = 'transparent'
+                            button_empty2.style.border = 'none'
+                            button_empty2.style.outline = 'none'
+                            button_empty2.style.fontSize = '16px'
+
+                            var button_entity3 = document.createElement('button')
+                            var entity3_mouseover = false
+                            button_entity3.innerHTML = 'Entity 3'
+                            button_entity3.style.color = 'white'
+                            button_entity3.style.padding = '36px'
+                            button_entity3.style.border = 'none' //'solid 1px white'
+                            button_entity3.style.borderRadius = '10px'
+                            button_entity3.style.outline = 'none'
+                            button_entity3.style.fontFamily = 'Courier New'
+                            button_entity3.style.fontSize = '16px'
+                            button_entity3.style.backgroundColor = 'rgba(0,0,0,.44)'
+                            button_entity3.onclick = () => {
+                                entity_type = 2
+                                stage = 2
+                            }
+                            button_entity3.onmouseenter = () => {
+                                entity3_mouseover = true
+                                button_entity3.style.cursor = 'pointer'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entity3.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                                        opacity += .02666
+                                        await sleep(.1)
+                                        if (!entity3_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            button_entity3.onmouseleave = function() {
+                                entity3_mouseover = false
+                                document.body.style.cursor = 'auto'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entity3.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                                        opacity -= .02666
+                                        await sleep(.1)
+                                        if (entity3_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+
+                            var button_empty3 = document.createElement('button')
+                            button_empty3.innerHTML = ''
+                            button_empty3.style.color = 'white'
+                            button_empty3.style.backgroundColor = 'transparent'
+                            button_empty3.style.border = 'none'
+                            button_empty3.style.outline = 'none'
+                            button_empty3.style.fontSize = '16px'
+
+                            var button_entitymulti = document.createElement('button')
+                            var entitymulti_mouseover = false
+                            button_entitymulti.innerHTML = 'Entity Free Form'
+                            button_entitymulti.style.color = 'white'
+                            button_entitymulti.style.padding = '36px'
+                            button_entitymulti.style.border = 'none' //'solid 1px white'
+                            button_entitymulti.style.borderRadius = '10px'
+                            button_entitymulti.style.outline = 'none'
+                            button_entitymulti.style.fontFamily = 'Courier New'
+                            button_entitymulti.style.fontSize = '16px'
+                            button_entitymulti.style.backgroundColor = 'rgba(0,0,0,.44)'
+                            button_entitymulti.onclick = () => {
+                                entity_type = 3
+                                stage = 2
+                            }
+                            button_entitymulti.onmouseenter = () => {
+                                entitymulti_mouseover = true
+                                button_entitymulti.style.cursor = 'pointer'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entitymulti.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entitymulti.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                                        opacity += .02666
+                                        await sleep(.1)
+                                        if (!entitymulti_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            button_entitymulti.onmouseleave = function() {
+                                entitymulti_mouseover = false
+                                document.body.style.cursor = 'auto'
+                                const work = async () => {
+                                    var opacity = parseFloat(button_entitymulti.style.backgroundColor.split(',')[3].replace(')',''))
+                                    for (var i = 0; i < 11; i++) {
+                                        button_entitymulti.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                                        opacity -= .02666
+                                        await sleep(.1)
+                                        if (entitymulti_mouseover) return
+                                    }
+                                }
+                                work()
+                            }
+                            
+                            div.appendChild(button_entitymulti)
+                            button_entity1.style.width = button_entitymulti.offsetWidth+'px'
+                            button_entity2.style.width = button_entitymulti.offsetWidth+'px'
+                            button_entity3.style.width = button_entitymulti.offsetWidth+'px'
+                            div.appendChild(button_entity1)
+                            div.appendChild(button_empty)
+                            div.appendChild(button_entity2)
+                            div.appendChild(button_empty2)
+                            div.appendChild(button_entity3)
+                            div.appendChild(button_empty3)
+                            div.removeChild(button_entitymulti)
+                            div.appendChild(button_entitymulti)
+
+                            while (stage==1) await sleep(.1)
+
+                            break
+
+                    // stage 2
+
+                        case 2:
+
+                            div.removeChild(button_entity1)
+                            div.removeChild(button_empty)
+                            div.removeChild(button_entity2)
+                            div.removeChild(button_empty2)
+                            div.removeChild(button_entity3)
+                            div.removeChild(button_empty3)
+                            div.removeChild(button_entitymulti)
+
+                            //controls.lookSpeed = 0
+                            //place_camera(camera_placings[camera_placings.length-1])
+                            // console.log(controls.object.rotation) // todo rm me
+                            // if (controls.object.rotation.x!=starting_pos[0]||controls.object.rotation.y!=starting_pos[1]||controls.object.rotation.z!=starting_pos[2])
+                            // controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
+
+                            // Todo: do the entity talking thingy here
+
+                            if (entity_type!=3) {
+
+                                scene.add(model_spirit)
+                                model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
+                                model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
+                                model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
+                                model_spirit.rotateZ(Math.PI/20)
+
+                                //write_smt_ = (smt) => write_smt(smt, model_spirit.position.x-.2, model_spirit.position.y+2.6, model_spirit.position.z, 0, -Math.PI/8, 0)
+
+                                var response = document.createElement('div')
+                                response.style.position = 'absolute'
+                                response.style.top = '6.666%'
+                                response.style.left = '50%'
+                                response.style.width = '200px'
+                                response.style.textAlign = 'center'
+                                document.body.appendChild(response)
+                                response.innerHTML = 'this is a sample response text'                   // TODO: make the buttons n stuff pretty
+                                response.style.color = 'white'
+                                response.style.fontFamily = 'Courier New'
+                                response.style.fontSize = '16px'
+                                
+                                var reply = document.createElement('input')
+                                reply.style.position = 'absolute'
+                                reply.style.bottom = '6.666%'
+                                reply.style.left = '50%'
+                                reply.style.width = '200px'
+                                reply.style.textAlign = 'center'
+                                reply.style.color = 'white'
+                                reply.style.backgroundColor = 'black'
+                                reply.style.outline = 'none'
+                                document.body.appendChild(reply)
+
+                                var send = document.createElement('button')
+                                send.style.position = 'absolute'
+                                send.style.bottom = '6.666%'
+                                send.style.left = '25%'
+                                send.style.textAlign = 'center'
+                                send.style.color = 'white'
+                                send.style.backgroundColor = 'black'
+                                send.innerHTML = 'Generate'
+                                send.style.border = 'none'
+                                send.style.cursor = 'pointer'
+                                document.body.appendChild(send)
+
+                            }
+
+                            else {
+
+                                controls.lookSpeed = .06
+                                
+                            }
+
                     }
-                }
-                button_login.onmouseenter = () => {
-                    login_mouseover = true
-                    button_login.style.cursor = 'pointer'
-                    const work = async () => {
-                        var opacity = parseFloat(button_login.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_login.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .66 ? .66 : opacity).toString()+')'
-                            opacity += .02666
-                            await sleep(.1)
-                            if (!login_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                button_login.onmouseleave = function() {
-                    login_mouseover = false
-                    document.body.style.cursor = 'auto'
-                    const work = async () => {
-                        var opacity = parseFloat(button_login.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_login.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
-                            opacity -= .02666
-                            await sleep(.1)
-                            if (login_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                
-                var button_empty = document.createElement('button')
-                button_empty.innerHTML = ''
-                button_empty.style.color = 'white'
-                button_empty.style.padding = '16px'
-                button_empty.style.backgroundColor = 'transparent'
-                button_empty.style.border = 'none'
-                button_empty.style.outline = 'none'
-                button_empty.style.fontSize = '16px'
-                
-                var button_guest = document.createElement('button')
-                var guest_mouseover = false
-                button_guest.innerHTML = 'Guest'
-                button_guest.style.color = 'white'
-                button_guest.style.padding = '44px'
-                button_guest.style.border = 'none' //'solid 1px white'
-                button_guest.style.borderRadius = '10px'
-                button_guest.style.outline = 'none'
-                button_guest.style.fontFamily = 'Courier New'
-                button_guest.style.fontSize = '16px'
-                button_guest.style.backgroundColor = 'rgba(0,0,0,.44)'
-                button_guest.onclick = () => {
-                    stage_1_completed = true
-                }
-                button_guest.onmouseenter = () => {
-                    guest_mouseover = true
-                    button_guest.style.cursor = 'pointer'
-                    const work = async () => {
-                        var opacity = parseFloat(button_guest.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_guest.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .66 ? .66 : opacity).toString()+')'
-                            opacity += .02666
-                            await sleep(.1)
-                            if (!guest_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                button_guest.onmouseleave = function() {
-                    guest_mouseover = false
-                    document.body.style.cursor = 'auto'
-                    const work = async () => {
-                        var opacity = parseFloat(button_guest.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_guest.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
-                            opacity -= .02666
-                            await sleep(.1)
-                            if (guest_mouseover) return
-                        }
-                    }
-                    work()
-                }
-
-                div.appendChild(button_login)
-                div.appendChild(button_empty)
-                div.appendChild(button_guest)
-
-                while (!stage_1_completed) await sleep(.1)
-
-                try {
-                    div.removeChild(button_login)
-                    div.removeChild(button_empty)
-                    div.removeChild(button_guest)
-                } catch { }
-
-                var seconds = 2
-
-                for (let i = 0; i < camera_placings.length; i++) {
-                    place_camera(camera_placings[i])
-                    await sleep(seconds/camera_placings.length)
-                }
-                place_camera(camera_placings[camera_placings.length-1])
-
-                div.style.display = 'flex'
-                div.style.flexDirection = 'column'
-
-                var button_entity1 = document.createElement('button')
-                var entity1_mouseover = false
-                button_entity1.innerHTML = 'Entity 1'
-                button_entity1.style.color = 'white'
-                button_entity1.style.padding = '36px'
-                button_entity1.style.border = 'none' //'solid 1px white'
-                button_entity1.style.borderRadius = '10px'
-                button_entity1.style.outline = 'none'
-                button_entity1.style.fontFamily = 'Courier New'
-                button_entity1.style.fontSize = '16px'
-                button_entity1.style.backgroundColor = 'rgba(0,0,0,.44)'
-                button_entity1.onclick = () => {
-                    entity_type = 0
-                    stage_2_completed = true
-                }
-                button_entity1.onmouseenter = () => {
-                    entity1_mouseover = true
-                    button_entity1.style.cursor = 'pointer'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entity1.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
-                            opacity += .02666
-                            await sleep(.1)
-                            if (!entity1_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                button_entity1.onmouseleave = function() {
-                    entity1_mouseover = false
-                    document.body.style.cursor = 'auto'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entity1.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
-                            opacity -= .02666
-                            await sleep(.1)
-                            if (entity1_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                
-                var button_empty = document.createElement('button')
-                button_empty.innerHTML = ''
-                button_empty.style.color = 'white'
-                button_empty.style.backgroundColor = 'transparent'
-                button_empty.style.border = 'none'
-                button_empty.style.outline = 'none'
-                button_empty.style.fontSize = '16px'
-                
-                var button_entity2 = document.createElement('button')
-                var entity2_mouseover = false
-                button_entity2.innerHTML = 'Entity 2'
-                button_entity2.style.color = 'white'
-                button_entity2.style.padding = '36px'
-                button_entity2.style.border = 'none' //'solid 1px white'
-                button_entity2.style.borderRadius = '10px'
-                button_entity2.style.outline = 'none'
-                button_entity2.style.fontFamily = 'Courier New'
-                button_entity2.style.fontSize = '16px'
-                button_entity2.style.backgroundColor = 'rgba(0,0,0,.44)'
-                button_entity2.onclick = () => {
-                    entity_type = 1
-                    stage_2_completed = true
-                }
-                button_entity2.onmouseenter = () => {
-                    entity2_mouseover = true
-                    button_entity2.style.cursor = 'pointer'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entity2.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
-                            opacity += .02666
-                            await sleep(.1)
-                            if (!entity2_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                button_entity2.onmouseleave = function() {
-                    entity2_mouseover = false
-                    document.body.style.cursor = 'auto'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entity2.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
-                            opacity -= .02666
-                            await sleep(.1)
-                            if (entity2_mouseover) return
-                        }
-                    }
-                    work()
-                }
-
-                var button_empty2 = document.createElement('button')
-                button_empty2.innerHTML = ''
-                button_empty2.style.color = 'white'
-                button_empty2.style.backgroundColor = 'transparent'
-                button_empty2.style.border = 'none'
-                button_empty2.style.outline = 'none'
-                button_empty2.style.fontSize = '16px'
-
-                var button_entity3 = document.createElement('button')
-                var entity3_mouseover = false
-                button_entity3.innerHTML = 'Entity 3'
-                button_entity3.style.color = 'white'
-                button_entity3.style.padding = '36px'
-                button_entity3.style.border = 'none' //'solid 1px white'
-                button_entity3.style.borderRadius = '10px'
-                button_entity3.style.outline = 'none'
-                button_entity3.style.fontFamily = 'Courier New'
-                button_entity3.style.fontSize = '16px'
-                button_entity3.style.backgroundColor = 'rgba(0,0,0,.44)'
-                button_entity3.onclick = () => {
-                    entity_type = 2
-                    stage_2_completed = true
-                }
-                button_entity3.onmouseenter = () => {
-                    entity3_mouseover = true
-                    button_entity3.style.cursor = 'pointer'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entity3.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
-                            opacity += .02666
-                            await sleep(.1)
-                            if (!entity3_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                button_entity3.onmouseleave = function() {
-                    entity3_mouseover = false
-                    document.body.style.cursor = 'auto'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entity3.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
-                            opacity -= .02666
-                            await sleep(.1)
-                            if (entity3_mouseover) return
-                        }
-                    }
-                    work()
-                }
-
-                var button_empty3 = document.createElement('button')
-                button_empty3.innerHTML = ''
-                button_empty3.style.color = 'white'
-                button_empty3.style.backgroundColor = 'transparent'
-                button_empty3.style.border = 'none'
-                button_empty3.style.outline = 'none'
-                button_empty3.style.fontSize = '16px'
-
-                var button_entitymulti = document.createElement('button')
-                var entitymulti_mouseover = false
-                button_entitymulti.innerHTML = 'Entity Free Form'
-                button_entitymulti.style.color = 'white'
-                button_entitymulti.style.padding = '36px'
-                button_entitymulti.style.border = 'none' //'solid 1px white'
-                button_entitymulti.style.borderRadius = '10px'
-                button_entitymulti.style.outline = 'none'
-                button_entitymulti.style.fontFamily = 'Courier New'
-                button_entitymulti.style.fontSize = '16px'
-                button_entitymulti.style.backgroundColor = 'rgba(0,0,0,.44)'
-                button_entitymulti.onclick = () => {
-                    entity_type = 3
-                    stage_2_completed = true
-                }
-                button_entitymulti.onmouseenter = () => {
-                    entitymulti_mouseover = true
-                    button_entitymulti.style.cursor = 'pointer'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entitymulti.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entitymulti.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
-                            opacity += .02666
-                            await sleep(.1)
-                            if (!entitymulti_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                button_entitymulti.onmouseleave = function() {
-                    entitymulti_mouseover = false
-                    document.body.style.cursor = 'auto'
-                    const work = async () => {
-                        var opacity = parseFloat(button_entitymulti.style.backgroundColor.split(',')[3].replace(')',''))
-                        for (var i = 0; i < 11; i++) {
-                            button_entitymulti.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
-                            opacity -= .02666
-                            await sleep(.1)
-                            if (entitymulti_mouseover) return
-                        }
-                    }
-                    work()
-                }
-                
-                div.appendChild(button_entitymulti)
-                button_entity1.style.width = button_entitymulti.offsetWidth+'px'
-                button_entity2.style.width = button_entitymulti.offsetWidth+'px'
-                button_entity3.style.width = button_entitymulti.offsetWidth+'px'
-                div.appendChild(button_entity1)
-                div.appendChild(button_empty)
-                div.appendChild(button_entity2)
-                div.appendChild(button_empty2)
-                div.appendChild(button_entity3)
-                div.appendChild(button_empty3)
-                div.removeChild(button_entitymulti)
-                div.appendChild(button_entitymulti)
-                
-                //const starting_pos = [controls.object.rotation.x, controls.object.rotation.y, controls.object.rotation.z]
-                controls.lookSpeed = 0 //.06
-                //console.log(controls.object.rotation) // todo rm me
-
-                while (!stage_2_completed) await sleep(.1)
-
-                div.removeChild(button_entity1)
-                div.removeChild(button_empty)
-                div.removeChild(button_entity2)
-                div.removeChild(button_empty2)
-                div.removeChild(button_entity3)
-                div.removeChild(button_empty3)
-                div.removeChild(button_entitymulti)
-
-                if (entity_type==3) controls.lookSpeed = .06
-                else {
-                    scene.add(model_spirit)
-                    model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
-                    model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
-                    model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
-                    model_spirit.rotateZ(Math.PI/20)
-                }
-
-                //controls.lookSpeed = 0
-                //place_camera(camera_placings[camera_placings.length-1])
-                // console.log(controls.object.rotation) // todo rm me
-                // if (controls.object.rotation.x!=starting_pos[0]||controls.object.rotation.y!=starting_pos[1]||controls.object.rotation.z!=starting_pos[2])
-                // controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
-
-                // Todo: do the entity talking thingy here
 
             } main()
 
