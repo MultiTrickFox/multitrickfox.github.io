@@ -409,7 +409,6 @@
                 button_entity1.onmouseenter = () => {
                     entity1_mouseover = true
                     button_entity1.style.cursor = 'pointer'
-                    controls.lookSpeed = 0
                     const work = async () => {
                         var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
                         for (var i = 0; i < 11; i++) {
@@ -424,7 +423,6 @@
                 button_entity1.onmouseleave = function() {
                     entity1_mouseover = false
                     document.body.style.cursor = 'auto'
-                    controls.lookSpeed = 0.06
                     const work = async () => {
                         var opacity = parseFloat(button_entity1.style.backgroundColor.split(',')[3].replace(')',''))
                         for (var i = 0; i < 11; i++) {
@@ -463,7 +461,6 @@
                 button_entity2.onmouseenter = () => {
                     entity2_mouseover = true
                     button_entity2.style.cursor = 'pointer'
-                    controls.lookSpeed = 0
                     const work = async () => {
                         var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
                         for (var i = 0; i < 11; i++) {
@@ -478,7 +475,6 @@
                 button_entity2.onmouseleave = function() {
                     entity2_mouseover = false
                     document.body.style.cursor = 'auto'
-                    controls.lookSpeed = 0.06
                     const work = async () => {
                         var opacity = parseFloat(button_entity2.style.backgroundColor.split(',')[3].replace(')',''))
                         for (var i = 0; i < 11; i++) {
@@ -517,7 +513,6 @@
                 button_entity3.onmouseenter = () => {
                     entity3_mouseover = true
                     button_entity3.style.cursor = 'pointer'
-                    controls.lookSpeed = 0
                     const work = async () => {
                         var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
                         for (var i = 0; i < 11; i++) {
@@ -532,7 +527,6 @@
                 button_entity3.onmouseleave = function() {
                     entity3_mouseover = false
                     document.body.style.cursor = 'auto'
-                    controls.lookSpeed = 0.06
                     const work = async () => {
                         var opacity = parseFloat(button_entity3.style.backgroundColor.split(',')[3].replace(')',''))
                         for (var i = 0; i < 11; i++) {
@@ -544,18 +538,70 @@
                     }
                     work()
                 }
+
+                var button_empty3 = document.createElement('button')
+                button_empty3.innerHTML = ''
+                button_empty3.style.color = 'white'
+                button_empty3.style.backgroundColor = 'transparent'
+                button_empty3.style.border = 'none'
+                button_empty3.style.outline = 'none'
+                button_empty3.style.fontSize = '16px'
+
+                var button_entitymulti = document.createElement('button')
+                var entitymulti_mouseover = false
+                button_entitymulti.innerHTML = 'Entity Free Form'
+                button_entitymulti.style.color = 'white'
+                button_entitymulti.style.padding = '44px'
+                button_entitymulti.style.border = 'none' //'solid 1px white'
+                button_entitymulti.style.borderRadius = '10px'
+                button_entitymulti.style.outline = 'none'
+                button_entitymulti.style.fontFamily = 'Courier New'
+                button_entitymulti.style.fontSize = '16px'
+                button_entitymulti.style.backgroundColor = 'rgba(0,0,0,.44)'
+                button_entitymulti.onclick = () => {
+                    entity_type = 3
+                    stage_2_completed = true
+                }
+                button_entitymulti.onmouseenter = () => {
+                    entitymulti_mouseover = true
+                    button_entitymulti.style.cursor = 'pointer'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entitymulti.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entitymulti.style.backgroundColor = 'rgba(0,0,0,'+(opacity > .6 ? .6 : opacity).toString()+')'
+                            opacity += .02666
+                            await sleep(.1)
+                            if (!entitymulti_mouseover) return
+                        }
+                    }
+                    work()
+                }
+                button_entitymulti.onmouseleave = function() {
+                    entitymulti_mouseover = false
+                    document.body.style.cursor = 'auto'
+                    const work = async () => {
+                        var opacity = parseFloat(button_entitymulti.style.backgroundColor.split(',')[3].replace(')',''))
+                        for (var i = 0; i < 11; i++) {
+                            button_entitymulti.style.backgroundColor = 'rgba(0,0,0,'+(opacity < .44 ? .44 : opacity).toString()+')'
+                            opacity -= .02666
+                            await sleep(.1)
+                            if (entitymulti_mouseover) return
+                        }
+                    }
+                    work()
+                }
                 
                 div.appendChild(button_entity1)
                 div.appendChild(button_empty)
                 div.appendChild(button_entity2)
                 div.appendChild(button_empty2)
                 div.appendChild(button_entity3)
+                div.appendChild(button_empty3)
+                div.appendChild(button_entitymulti)
 
-                console.log(controls)
-
-                const starting_pos = [controls.object.position.x, controls.object.position.y, controls.object.position.z]
-                controls.lookSpeed = .06
-                console.log(controls.object.position) // todo rm me
+                //const starting_pos = [controls.object.rotation.x, controls.object.rotation.y, controls.object.rotation.z]
+                controls.lookSpeed = 0 //.06
+                //console.log(controls.object.rotation) // todo rm me
 
                 while (!stage_2_completed) await sleep(.1)
 
@@ -564,18 +610,25 @@
                 div.removeChild(button_entity2)
                 div.removeChild(button_empty2)
                 div.removeChild(button_entity3)
+                div.removeChild(button_empty3)
+                div.removeChild(button_entitymulti)
 
-                scene.add(model_spirit)
-                model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
-                model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
-                model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
-                model_spirit.rotateZ(Math.PI/20)
+                if (entity_type==3) controls.lookSpeed = .06
+                else {
+                    scene.add(model_spirit)
+                    model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
+                    model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
+                    model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
+                    model_spirit.rotateZ(Math.PI/20)
+                }
 
-                controls.lookSpeed = 0
+                //controls.lookSpeed = 0
                 //place_camera(camera_placings[camera_placings.length-1])
-                console.log(controls.object.position) // todo rm me
-                if (controls.object.position.x!=starting_pos[0]||controls.object.position.y!=starting_pos[1]||controls.object.position.z!=starting_pos[2])
-                    controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
+                // console.log(controls.object.rotation) // todo rm me
+                // if (controls.object.rotation.x!=starting_pos[0]||controls.object.rotation.y!=starting_pos[1]||controls.object.rotation.z!=starting_pos[2])
+                // controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
+
+                // Todo: do the entity talking thingy here
 
             } main()
 
@@ -583,9 +636,9 @@
 
         <script>
 
-            // Todo: do the entity talking thingy here
+            
 
-        
+            
 
         </script>
 
