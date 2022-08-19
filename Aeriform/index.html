@@ -551,7 +551,11 @@
                 div.appendChild(button_empty2)
                 div.appendChild(button_entity3)
 
+                console.log(controls)
+
+                const starting_pos = [controls.object.position.x, controls.object.position.y, controls.object.position.z]
                 controls.lookSpeed = .06
+                console.log(controls.object.position) // todo rm me
 
                 while (!stage_2_completed) await sleep(.1)
 
@@ -569,7 +573,9 @@
 
                 controls.lookSpeed = 0
                 //place_camera(camera_placings[camera_placings.length-1])
-                controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
+                console.log(controls.object.position) // todo rm me
+                if (controls.object.position.x!=starting_pos[0]||controls.object.position.y!=starting_pos[1]||controls.object.position.z!=starting_pos[2])
+                    controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
 
             } main()
 
