@@ -785,7 +785,12 @@
                             send.style.cursor = 'pointer'
                             document.body.appendChild(send)
 
+                            var is_sending = false
+
                             send.onclick = () => {
+
+                                if (is_sending) return
+                                else is_sending = true
 
                                 document.body.style.cursor = 'wait'
 
@@ -818,9 +823,13 @@
                                 document.body.appendChild(reply)
                                 document.body.appendChild(reset)
 
+                                is_sending = false
+
                             }
 
                             reset.onclick = () => {
+
+                                if (is_sending) return
 
                                 stage_1_firsttime = false
                                 stage = 1
