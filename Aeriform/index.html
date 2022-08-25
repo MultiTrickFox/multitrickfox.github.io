@@ -782,25 +782,38 @@
                                 document.body.appendChild(send)
 
                                 send.onclick = () => {
-                                    response.innerHTML = '. . .'
-                                    xhr = new XMLHttpRequest();
-                                    xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
-                                    xhr.setRequestHeader("username", username)
-                                    xhr.setRequestHeader("password", password)
-                                    xhr.setRequestHeader("cmd", "generate")
-                                    xhr.setRequestHeader("reply", reply.value)
-                                    xhr.setRequestHeader("template", entity_type)
-                                    xhr.onreadystatechange = function() {
-                                        if (xhr.readyState == XMLHttpRequest.DONE) {
-                                            var result = JSON.parse(xhr.responseText)
-                                            response.innerHTML = result.response
-                                            document.body.style.cursor = 'auto'
+
+                                    document.body.style.cursor = 'wait'
+
+                                    if (username!=null) {
+
+                                        response.innerHTML = '. . .'
+                                        xhr = new XMLHttpRequest();
+                                        xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                                        xhr.setRequestHeader("username", username)
+                                        xhr.setRequestHeader("password", password)
+                                        xhr.setRequestHeader("cmd", "generate")
+                                        xhr.setRequestHeader("reply", reply.value)
+                                        xhr.setRequestHeader("template", entity_type)
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                                var result = JSON.parse(xhr.responseText)
+                                                response.innerHTML = result.response
+                                                document.body.style.cursor = 'auto'
+                                            }
                                         }
+                                        xhr.send()
+
+                                    } else {
+
+                                        response.innerHTML = 'todo:' // todo: do. examples
+                                        document.body.style.cursor = 'auto'
+
                                     }
-                                    xhr.send()
                                     reply.value = ''
                                     document.body.appendChild(reply)
                                     document.body.appendChild(reset)
+
                                 }
 
                                 reset.onclick = () => {
