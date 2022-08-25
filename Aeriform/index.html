@@ -701,25 +701,7 @@
                             }
                             xhr.send()
 
-                            if (entity_type!='the obscure ones') {
-
-                                loader.load('spirit '+entity_type+'.glb', function ( gltf ) {
-                                    model_spirit = gltf.scene
-                                    model_spirit.rotateX(Math.PI/2)
-                                    //scene.add(model_spirit)
-                                    mixer = new THREE.AnimationMixer( model_spirit )
-                                	mixer.clipAction( gltf.animations[ 2 ] ).play()
-                                    model_spirit.name = "model_spirit"
-                                    scene.add(model_spirit)
-                                    model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
-                                    model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
-                                    model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
-                                    model_spirit.rotateZ(Math.PI/20)
-                                })
-
-                                //write_smt_ = (smt) => write_smt(smt, model_spirit.position.x-.2, model_spirit.position.y+2.6, model_spirit.position.z, 0, -Math.PI/8, 0)
-
-                                var response = document.createElement('div')
+                            var response = document.createElement('div')
                                 response.style.position = 'absolute'
                                 response.style.top = '6.666%'
                                 response.style.left = '50%'
@@ -821,13 +803,43 @@
                                     stage_1_firsttime = false
                                     stage = 1
                                     response.innerHTML = ''
-                                    document.body.removeChild(reply)
-                                    document.body.removeChild(send)
-                                    document.body.removeChild(reset)
+
+                                    controls.lookSpeed = 0//.06
+                                    //place_camera(camera_placings[camera_placings.length-1])
+
+                                    var buttonExists = false
+                                    for (let i = 0; i < document.body.children.length; i++)
+                                        if (document.body.children[i] == reply) {
+                                            buttonExists = true
+                                            break
+                                        }
+                                    if (!buttonExists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
+
                                     scene.remove(model_spirit)
+
+                                    try { document.body.removeChild(reset) } catch { } 
+                                    try { document.body.removeChild(reply) } catch { } 
+                                    try { document.body.removeChild(send) } catch { } 
+                                    
                                     //console.log(renderer.info)
 
                                 }
+
+                            if (entity_type!='the obscure ones') {
+
+                                loader.load('spirit '+entity_type+'.glb', function ( gltf ) {
+                                    model_spirit = gltf.scene
+                                    model_spirit.rotateX(Math.PI/2)
+                                    //scene.add(model_spirit)
+                                    mixer = new THREE.AnimationMixer( model_spirit )
+                                	mixer.clipAction( gltf.animations[ 2 ] ).play()
+                                    model_spirit.name = "model_spirit"
+                                    scene.add(model_spirit)
+                                    model_spirit.position.x = camera_placings[camera_placings.length-1][0] + .936
+                                    model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
+                                    model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
+                                    model_spirit.rotateZ(Math.PI/20)
+                                })
 
                             }
 
@@ -835,6 +847,9 @@
 
                                 controls.lookSpeed = .06
                                 //controls.movementSpeed = .6
+
+                                document.body.appendChild(reset)
+                                document.body.removeChild(send)
 
                             }
 
