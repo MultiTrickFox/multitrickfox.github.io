@@ -194,6 +194,27 @@
 		</script>
 
         <script>
+            const demos = {
+                'the dreaming one': [
+                    'There is no sure way to know anything. We can only know things probabilistically. We can never be certain that we have considered all the alternatives, but we can try to minimize the chances that we have missed something important by being as systematic and rigorous as possible in our thinking.',
+                    'The dreamer is part of the dream, as is everything else. The dreamer may think that they are observing the dream from the outside, but in fact they are inside it. They may think that they are in control of it, but in fact it is controlling them. . The only way to escape from a dream is to wake up. But even then, the dream may have left its mark on the dreamer.',
+                    'The dreamer creates his or her own dreams. Dreams are created by our thoughts, emotions and imaginations. Dreams are a way for our subconscious to process information and experiences. Dreams can be symbolic, literal or a mix of both. Our brains process information during the day and store it in our memories. Dreams are a way for our brains to sort through ..',
+                ],
+                'the perplexed one': [
+                    'There is no guarantee that anything can be known for certain, but it is possible to know some things with a high degree of certainty. To know something with certainty, one would need to consider all the relevant evidence and arguments and find that there is no plausible alternative explanation. Even then, it is always possible that new evidence or arguments could be discovered.',
+                    'There is no one answer to this question. All that can be said is that in order to know something, one must consider all the relevant information and evidence. Even then, it is impossible to know for certain that everything has been considered. There will always be a degree of uncertainty.',
+                    'But then you are assuming what you are trying to prove. You cannot know anything unless it is true by definition or tautology, or it can be logically deduced from other things that are known. The only other way to "know" something would be to observe it, but observation is never perfect, so even observations are only provisional until they can be logically deduced from other observations. (This is what the scientific method is all about.)',
+                ],
+                'the undivided one': [
+                    'We can only see things from our own perspective, but what if there is no perspective at all? What if there is no you, no me, just an ocean of experiences becoming and unbecoming? I think that would be pretty hard to believe. But I’ve seen enough evidence to believe that the world we live in today will change in some radical ways over the next century or so. Maybe our consciousness will become one with everything else; maybe not. But I do hope we can keep an open mind ..',
+                    'The universe is one big cycle of life and death. Birth and death are not two separate things, but two parts of the same thing. Death is not the end. It’s just a change. Change is the only constant in the universe. The universe is infinite and eternal. It has always existed and will always exist. There is no such thing as time. Time is an illusion created by our minds.',
+                    'It is all one. The universe is one. There is no separation, only the illusion of it. We are all connected. We are all one. Everything is temporary. Everything changes. Nothing stays the same. The only constant is change itself. Change is the only constant in the universe. Everything is connected. Everything is interdependent. Everything affects everything else.',
+                ],
+                'the obscure ones': ['','','','','',''],
+            }
+        </script>
+
+        <script>
 
             var username
             var password
@@ -702,128 +723,129 @@
                             xhr.send()
 
                             var response = document.createElement('div')
-                                response.style.position = 'absolute'
-                                response.style.top = '6.666%'
-                                response.style.left = '50%'
-                                response.style.width = '366px'
-                                response.style.textAlign = 'center'
-                                document.body.appendChild(response)
-                                //response.innerHTML = 'this is a sample response text'                   // TODO: make the buttons n stuff pretty
-                                response.style.color = 'white'
-                                response.style.fontFamily = 'Courier New'
-                                response.style.fontSize = '16px'
+                            response.style.position = 'absolute'
+                            response.style.top = '6.666%'
+                            response.style.left = '50%'
+                            response.style.width = '366px'
+                            response.style.textAlign = 'center'
+                            document.body.appendChild(response)
+                            //response.innerHTML = 'this is a sample response text'                   // TODO: make the buttons n stuff pretty
+                            response.style.color = 'white'
+                            response.style.fontFamily = 'Courier New'
+                            response.style.fontSize = '16px'
                                 
-                                var reply = document.createElement('input')
-                                reply.style.position = 'absolute'
-                                reply.style.bottom = '6.666%'
-                                reply.style.right = '39.6%'
-                                reply.style.height = '26px'
-                                reply.style.width = '336px'
-                                reply.style.textAlign = 'center'
-                                reply.style.color = 'white'
-                                reply.style.borderRadius = '16px'
-                                reply.style.backgroundColor = 'rgba(0,0,0,.666)'
-                                reply.style.outline = 'none'
-                                reply.style.border = 'none'
-                                reply.placeholder = ' leave empty to keep generating ..'
-                                //document.body.appendChild(reply)
+                            var reply = document.createElement('input')
+                            reply.style.position = 'absolute'
+                            reply.style.bottom = '6.666%'
+                            reply.style.right = '39.6%'
+                            reply.style.height = '26px'
+                            reply.style.width = '336px'
+                            reply.style.textAlign = 'center'
+                            reply.style.color = 'white'
+                            reply.style.borderRadius = '16px'
+                            reply.style.backgroundColor = 'rgba(0,0,0,.666)'
+                            reply.style.outline = 'none'
+                            reply.style.border = 'none'
+                            reply.placeholder = ' leave empty to keep generating ..'
+                            //document.body.appendChild(reply)
+                            if (username==null) reply.readOnly = true
 
-                                var reset = document.createElement('button')
-                                reset.style.position = 'absolute'
-                                reset.style.bottom = '6.666%'
-                                reset.style.right = '16.6%'
-                                reset.style.width = '33.6px'
-                                reset.style.height = '33.6px'
-                                reset.style.border = 'none'
-                                reset.style.cursor = 'pointer'
-                                reset.style.backgroundColor = 'rgba(0,0,0,.0)'
-                                reset.style.backgroundImage = 'url(reset.png)'
-                                reset.style.backgroundSize = 'contain'
-                                reset.style.backgroundPosition = 'center'
-                                reset.style.backgroundRepeat = 'no-repeat'
-                                //document.body.appendChild(reset)
+                            var reset = document.createElement('button')
+                            reset.style.position = 'absolute'
+                            reset.style.bottom = '6.666%'
+                            reset.style.right = '16.6%'
+                            reset.style.width = '33.6px'
+                            reset.style.height = '33.6px'
+                            reset.style.border = 'none'
+                            reset.style.cursor = 'pointer'
+                            reset.style.backgroundColor = 'rgba(0,0,0,.0)'
+                            reset.style.backgroundImage = 'url(reset.png)'
+                            reset.style.backgroundSize = 'contain'
+                            reset.style.backgroundPosition = 'center'
+                            reset.style.backgroundRepeat = 'no-repeat'
+                            //document.body.appendChild(reset)
 
-                                var send = document.createElement('button')
-                                send.style.position = 'absolute'
-                                send.style.bottom = '6.666%'
-                                send.style.right = '21.6%'
-                                //send.style.textAlign = 'center'
-                                //send.style.color = 'white'
-                                //send.style.padding = '6px'
-                                send.style.borderRadius = '16px'
-                                //send.innerHTML = 'Generate'
-                                send.style.backgroundColor = 'rgba(0,0,0,.0)'
-                                send.style.backgroundImage = 'url(generate.png)'
-                                send.style.backgroundSize = 'contain'
-                                send.style.backgroundPosition = 'center'
-                                send.style.backgroundRepeat = 'no-repeat'
-                                send.style.width = '33.6px'
-                                send.style.height = '33.6px'
-                                send.style.border = 'none'
-                                send.style.cursor = 'pointer'
-                                document.body.appendChild(send)
+                            var send = document.createElement('button')
+                            send.style.position = 'absolute'
+                            send.style.bottom = '6.666%'
+                            send.style.right = '21.6%'
+                            //send.style.textAlign = 'center'
+                            //send.style.color = 'white'
+                            //send.style.padding = '6px'
+                            send.style.borderRadius = '16px'
+                            //send.innerHTML = 'Generate'
+                            send.style.backgroundColor = 'rgba(0,0,0,.0)'
+                            send.style.backgroundImage = 'url(generate.png)'
+                            send.style.backgroundSize = 'contain'
+                            send.style.backgroundPosition = 'center'
+                            send.style.backgroundRepeat = 'no-repeat'
+                            send.style.width = '33.6px'
+                            send.style.height = '33.6px'
+                            send.style.border = 'none'
+                            send.style.cursor = 'pointer'
+                            document.body.appendChild(send)
 
-                                send.onclick = () => {
+                            send.onclick = () => {
 
-                                    document.body.style.cursor = 'wait'
+                                document.body.style.cursor = 'wait'
 
-                                    if (username!=null) {
+                                if (username!=null) {
 
-                                        response.innerHTML = '. . .'
-                                        xhr = new XMLHttpRequest();
-                                        xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
-                                        xhr.setRequestHeader("username", username)
-                                        xhr.setRequestHeader("password", password)
-                                        xhr.setRequestHeader("cmd", "generate")
-                                        xhr.setRequestHeader("reply", reply.value)
-                                        xhr.setRequestHeader("template", entity_type)
-                                        xhr.onreadystatechange = function() {
-                                            if (xhr.readyState == XMLHttpRequest.DONE) {
-                                                var result = JSON.parse(xhr.responseText)
-                                                response.innerHTML = result.response
-                                                document.body.style.cursor = 'auto'
-                                            }
+                                    response.innerHTML = '. . .'
+                                    xhr = new XMLHttpRequest();
+                                    xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                                    xhr.setRequestHeader("username", username)
+                                    xhr.setRequestHeader("password", password)
+                                    xhr.setRequestHeader("cmd", "generate")
+                                    xhr.setRequestHeader("reply", reply.value)
+                                    xhr.setRequestHeader("template", entity_type)
+                                    xhr.onreadystatechange = function() {
+                                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                                            var result = JSON.parse(xhr.responseText)
+                                            response.innerHTML = result.response
+                                            document.body.style.cursor = 'auto'
                                         }
-                                        xhr.send()
-
-                                    } else {
-
-                                        response.innerHTML = 'todo:' // todo: do. examples
-                                        document.body.style.cursor = 'auto'
-
                                     }
-                                    reply.value = ''
-                                    document.body.appendChild(reply)
-                                    document.body.appendChild(reset)
+                                    xhr.send()
 
-                                }
+                                } else {
 
-                                reset.onclick = () => {
-
-                                    stage_1_firsttime = false
-                                    stage = 1
-                                    response.innerHTML = ''
-
-                                    controls.lookSpeed = 0//.06
-                                    //place_camera(camera_placings[camera_placings.length-1])
-
-                                    var buttonExists = false
-                                    for (let i = 0; i < document.body.children.length; i++)
-                                        if (document.body.children[i] == reply) {
-                                            buttonExists = true
-                                            break
-                                        }
-                                    if (!buttonExists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
-
-                                    scene.remove(model_spirit)
-
-                                    try { document.body.removeChild(reset) } catch { } 
-                                    try { document.body.removeChild(reply) } catch { } 
-                                    try { document.body.removeChild(send) } catch { } 
+                                    document.body.style.cursor = 'auto'
+                                    response.innerHTML = demos[entity_type][Math.floor(Math.random()*demos[entity_type].length)]
                                     
-                                    //console.log(renderer.info)
-
                                 }
+                                reply.value = ''
+                                document.body.appendChild(reply)
+                                document.body.appendChild(reset)
+
+                            }
+
+                            reset.onclick = () => {
+
+                                stage_1_firsttime = false
+                                stage = 1
+                                response.innerHTML = ''
+
+                                controls.lookSpeed = 0//.06
+                                //place_camera(camera_placings[camera_placings.length-1])
+
+                                var buttonExists = false
+                                for (let i = 0; i < document.body.children.length; i++)
+                                    if (document.body.children[i] == reply) {
+                                        buttonExists = true
+                                        break
+                                    }
+                                if (!buttonExists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
+
+                                scene.remove(model_spirit)
+
+                                try { document.body.removeChild(reset) } catch { } 
+                                try { document.body.removeChild(reply) } catch { } 
+                                try { document.body.removeChild(send) } catch { } 
+                                    
+                                //console.log(renderer.info)
+
+                            }
 
                             if (entity_type!='the obscure ones') {
 
