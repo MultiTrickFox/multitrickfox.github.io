@@ -29,9 +29,7 @@
             const camera_placings = [
                 [1.0066544111402496, -0.08902988937746323, -10.828732975955903, 0.017285800040492433, -0.2468450125445477, 0.004106891538857817],
 
-
-
-                [1.9624814900953604, -0.34813245469953147, -15.466418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
+                [1.9624814900953604, -0.34813245469953147, -15.366418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
             ] 
                 // [0.9001129996291835, -0.44667495571716836, -12.726222640853901, 0.10841063274123983, -0.17786858959131863, 0.01925445144624984],
                 // [1.827566140670746, -0.40457597671216744, -13.384445504435558, 0.04315208464779503, -0.0878911038220728, 0.003790137950046403],
@@ -54,6 +52,9 @@
                 camera.rotation.y += camera_placing[4] 
                 camera.rotation.z += camera_placing[5] 
             }
+
+            const audio = new Audio('tiara.wav');
+            audio.loop = true
 
         </script>
 
@@ -252,6 +253,9 @@
                             button_login.style.fontSize = '16px'
                             button_login.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_login.onclick = () => {
+
+                                audio.play()
+
                                 div.removeChild(button_login)
                                 div.removeChild(button_empty)
                                 div.removeChild(button_guest)
@@ -385,6 +389,7 @@
                             button_guest.style.fontSize = '16px'
                             button_guest.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_guest.onclick = () => {
+                                audio.play()
                                 stage = 1
                             }
                             button_guest.onmouseenter = () => {
@@ -576,7 +581,7 @@
 
                             var button_entity3 = document.createElement('button')
                             var entity3_mouseover = false
-                            button_entity3.innerHTML = 'the unified one'
+                            button_entity3.innerHTML = 'the undivided one'
                             button_entity3.style.color = 'white'
                             button_entity3.style.border = 'none' //'solid 1px white'
                             button_entity3.style.borderRadius = '10px'
