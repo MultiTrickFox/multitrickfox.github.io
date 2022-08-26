@@ -895,8 +895,6 @@
 
                                 document.body.removeChild(ar)
                             
-                                // todo: do web ar
-
                                 modelViewer = document.createElement('model-viewer')
                                 modelViewer.setAttribute('ar', '')
                                 modelViewer.setAttribute('src', 'spirit '+entity_type+'.glb')
@@ -905,17 +903,24 @@
                                 modelViewer.setAttribute('camera-controls', '')
                                 modelViewer.setAttribute('alt', 'A 3D model of an entity')
                                 modelViewer.setAttribute('camera-orbit', '180deg 0deg 3m')
+                                modelViewer.setAttribute('position', '0m -1m 0m')
                                 modelViewer.style.width = '100%'
                                 modelViewer.style.height = '100%'
 
                                 document.body.removeChild(renderer.domElement)
                                 document.body.appendChild(modelViewer)
-                                document.body.removeChild(reply)
-                                document.body.appendChild(reeply)
                                 document.body.removeChild(send)
                                 document.body.appendChild(send)
                                 document.body.removeChild(reset)
                                 document.body.appendChild(reset)
+                                try {
+                                    document.body.removeChild(reply)
+                                    document.body.appendChild(reply)
+                                } catch { }
+                                try {
+                                    document.body.removeChild(response)
+                                    document.body.appendChild(response)
+                                } catch { }
 
                             }
 
