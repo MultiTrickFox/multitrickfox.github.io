@@ -22,7 +22,9 @@
         <script src="3js/loaders/FontLoader.js"></script>
         <script src="3js/controls/FirstPersonControls.js"></script>
         <script src="3js/geometries/TextGeometry.js"></script>
-        
+
+        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
         <script> 
             const sleep = sec => new Promise(r => setTimeout(r, sec*1_000))
 
@@ -60,7 +62,7 @@
 
 		<script>
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true} )
+            const renderer = new THREE.WebGLRenderer({ antialias: true})
             document.body.appendChild(renderer.domElement)
 			renderer.setSize(window.innerWidth, window.innerHeight)
 
@@ -114,6 +116,10 @@
 			// 	mixer.clipAction( gltf.animations[ 2 ] ).play()
             //     model_spirit.name = "model_spirit"
             // })
+
+            // Todo : Add fog here..
+            
+
             
             const clock = new THREE.Clock()
             var mixer = null
@@ -755,21 +761,6 @@
                             //document.body.appendChild(reply)
                             if (username==null) reply.readOnly = true
 
-                            var reset = document.createElement('button')
-                            reset.style.position = 'absolute'
-                            reset.style.bottom = '6.666%'
-                            reset.style.right = '16.6%'
-                            reset.style.width = '33.6px'
-                            reset.style.height = '33.6px'
-                            reset.style.border = 'none'
-                            reset.style.cursor = 'pointer'
-                            reset.style.backgroundColor = 'rgba(0,0,0,.0)'
-                            reset.style.backgroundImage = 'url(reset.png)'
-                            reset.style.backgroundSize = 'contain'
-                            reset.style.backgroundPosition = 'center'
-                            reset.style.backgroundRepeat = 'no-repeat'
-                            //document.body.appendChild(reset)
-
                             var send = document.createElement('button')
                             send.style.position = 'absolute'
                             send.style.bottom = '6.666%'
@@ -789,6 +780,36 @@
                             send.style.border = 'none'
                             send.style.cursor = 'pointer'
                             document.body.appendChild(send)
+
+                            var reset = document.createElement('button')
+                            reset.style.position = 'absolute'
+                            reset.style.bottom = '6.666%'
+                            reset.style.right = '16.6%'
+                            reset.style.width = '33.6px'
+                            reset.style.height = '33.6px'
+                            reset.style.border = 'none'
+                            reset.style.cursor = 'pointer'
+                            reset.style.backgroundColor = 'rgba(0,0,0,.0)'
+                            reset.style.backgroundImage = 'url(reset.png)'
+                            reset.style.backgroundSize = 'contain'
+                            reset.style.backgroundPosition = 'center'
+                            reset.style.backgroundRepeat = 'no-repeat'
+                            document.body.appendChild(reset)
+
+                            var ar = document.createElement('button')
+                            ar.style.position = 'absolute'
+                            ar.style.bottom = '6.666%'
+                            ar.style.right = '6.666%'
+                            ar.style.width = '33.6px'
+                            ar.style.height = '33.6px'
+                            ar.style.border = 'none'
+                            ar.style.cursor = 'pointer'
+                            ar.style.backgroundColor = 'rgba(0,0,0,.0)'
+                            ar.style.backgroundImage = 'url(ar.png)'
+                            ar.style.backgroundSize = 'contain'
+                            ar.style.backgroundPosition = 'center'
+                            ar.style.backgroundRepeat = 'no-repeat'
+                            //document.body.appendChild(ar)
 
                             send.onclick = () => {
 
@@ -813,7 +834,7 @@
                                             document.body.style.cursor = 'auto'
                                             reply.value = ''
                                             document.body.appendChild(reply)
-                                            document.body.appendChild(reset)
+                                            //document.body.appendChild(reset)
                                         }
                                     }
                                     xhr.send()
@@ -824,7 +845,7 @@
                                     response.innerHTML = demos[entity_type][Math.floor(Math.random()*demos[entity_type].length)]
                                     reply.value = ''
                                     document.body.appendChild(reply)
-                                    document.body.appendChild(reset)
+                                    //document.body.appendChild(reset)
                                     
                                 }
                                 // reply.value = ''
@@ -844,21 +865,57 @@
                                 controls.lookSpeed = 0//.06
                                 //place_camera(camera_placings[camera_placings.length-1])
 
-                                var buttonExists = false
+                                var button_exists = false
                                 for (let i = 0; i < document.body.children.length; i++)
-                                    if (document.body.children[i] == reply) {
-                                        buttonExists = true
+                                    if (document.body.children[i] == send) {
+                                        button_exists = true
                                         break
                                     }
-                                if (!buttonExists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
+                                if (!button_exists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
 
                                 scene.remove(model_spirit)
 
                                 try { document.body.removeChild(reset) } catch { } 
                                 try { document.body.removeChild(reply) } catch { } 
-                                try { document.body.removeChild(send) } catch { } 
+                                try { document.body.removeChild(send) } catch { }
+                                try { document.body.removeChild(ar) } catch { } 
+
+                                try { 
+                                    document.body.removeChild(modelViewer)
+                                    document.body.appendChild(renderer.domElement)
+                                } catch { }
                                     
                                 //console.log(renderer.info)
+
+                            }
+
+                            var modelViewer
+
+                            ar.onclick = () => {
+
+                                document.body.removeChild(ar)
+                            
+                                // todo: do web ar
+
+                                modelViewer = document.createElement('model-viewer')
+                                modelViewer.setAttribute('ar', '')
+                                modelViewer.setAttribute('src', 'spirit '+entity_type+'.glb')
+                                modelViewer.setAttribute('ios-src', 'spirit '+entity_type+'.glb')
+                                //modelViewer.setAttribute('auto-rotate', '')
+                                modelViewer.setAttribute('camera-controls', '')
+                                modelViewer.setAttribute('alt', 'A 3D model of an entity')
+                                modelViewer.setAttribute('camera-orbit', '180deg 0deg 3m')
+                                modelViewer.style.width = '100%'
+                                modelViewer.style.height = '100%'
+
+                                document.body.removeChild(renderer.domElement)
+                                document.body.appendChild(modelViewer)
+                                document.body.removeChild(reply)
+                                document.body.appendChild(reeply)
+                                document.body.removeChild(send)
+                                document.body.appendChild(send)
+                                document.body.removeChild(reset)
+                                document.body.appendChild(reset)
 
                             }
 
@@ -876,6 +933,8 @@
                                     model_spirit.position.y = camera_placings[camera_placings.length-1][1] - .666
                                     model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
                                     model_spirit.rotateZ(Math.PI/20)
+
+                                    document.body.appendChild(ar)
                                 })
 
                             }
