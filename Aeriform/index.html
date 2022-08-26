@@ -806,6 +806,9 @@
                                             var result = JSON.parse(xhr.responseText)
                                             response.innerHTML = result.response
                                             document.body.style.cursor = 'auto'
+                                            reply.value = ''
+                                            document.body.appendChild(reply)
+                                            document.body.appendChild(reset)
                                         }
                                     }
                                     xhr.send()
@@ -814,11 +817,14 @@
 
                                     document.body.style.cursor = 'auto'
                                     response.innerHTML = demos[entity_type][Math.floor(Math.random()*demos[entity_type].length)]
+                                    reply.value = ''
+                                    document.body.appendChild(reply)
+                                    document.body.appendChild(reset)
                                     
                                 }
-                                reply.value = ''
-                                document.body.appendChild(reply)
-                                document.body.appendChild(reset)
+                                // reply.value = ''
+                                // document.body.appendChild(reply)
+                                // document.body.appendChild(reset)
 
                             }
 
