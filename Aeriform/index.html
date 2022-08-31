@@ -97,7 +97,7 @@
                 scene.add(model_shrine)
             })
 
-            // var model_stairs
+            var model_stairs
             // loader.load('stairs.glb', function ( gltf ) {
             //     model_stairs = gltf.scene
             //     model_stairs.rotateY(-45)
@@ -171,7 +171,7 @@
         <script>
 
             var movement_enabled = false
-            const move_sensitivity = .06
+            const move_sensitivity = .01
             const look_sensitivity = 1           
 
             var forward = false
@@ -217,7 +217,6 @@
 
             }
 
-            // todo lock the mouse
             var mouseX_ = 0
             var mouseY_ = 0
             var mouseX_delta = 0
@@ -247,7 +246,7 @@
                     await sleep(.01)
                     if (!movement_enabled) continue
 
-                    phi += -mouseX_delta /window.innerWidth *look_sensitivity
+                    phi += clamp(-mouseX_delta /window.innerWidth *look_sensitivity, -Math.PI/12, Math.PI/12)
                     theta = clamp(theta + -mouseY_delta /window.innerHeight *look_sensitivity, -Math.PI/3, Math.PI/3)
 
                     qx = new THREE.Quaternion() ; qx.setFromAxisAngle(new THREE.Vector3(0,1,0), phi)
@@ -1036,6 +1035,25 @@
 
                                 document.body.appendChild(reset)
                                 document.body.removeChild(send)
+
+                                if (model_stairs == null) {
+
+                                    loader.load('stairs.glb', function ( gltf ) {
+                                        model_stairs = gltf.scene
+                                        model_stairs.rotateY(-45)
+                                        model_stairs.position.y = -6
+                                        model_stairs.position.x = -18.6
+                                        model_stairs.position.z = -2.8
+                                        scene.add(model_stairs)
+                                    })
+
+                                }
+
+                                if (loader_secondpath == null) {
+
+                                    // todo; do
+
+                                }
 
                             }
 
