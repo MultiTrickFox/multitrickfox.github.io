@@ -21,23 +21,18 @@
         <script src="3js/loaders/GLTFLoader.js"></script>
         <script src="3js/loaders/FontLoader.js"></script>
         <script src="3js/controls/FirstPersonControls.js"></script>
+        <script src="3js/controls/FlyControls.js"></script>
         <script src="3js/geometries/TextGeometry.js"></script>
-
-        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
         <script> 
             const sleep = sec => new Promise(r => setTimeout(r, sec*1_000))
+            const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 
             const camera_placings = [
                 [1.0066544111402496, -0.08902988937746323, -10.828732975955903, 0.017285800040492433, -0.2468450125445477, 0.004106891538857817],
-
                 [1.9624814900953604, -0.34813245469953147, -15.366418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
-            ] 
-                // [0.9001129996291835, -0.44667495571716836, -12.726222640853901, 0.10841063274123983, -0.17786858959131863, 0.01925445144624984],
-                // [1.827566140670746, -0.40457597671216744, -13.384445504435558, 0.04315208464779503, -0.0878911038220728, 0.003790137950046403],
-                // [2.0774814900953604, -0.34813245469953147, -15.206418047956898, 0.07227542077054726, -0.2484735210153035, 0.017803440341616527],
-                // 
-
+            ]
+            
             function place_camera(camera_placing) {
                 camera.position.x = camera_placing[0]
                 camera.position.y = camera_placing[1] 
@@ -75,9 +70,14 @@
             // controls.minDistance = 0
             // controls.maxDistance = 99999999
 
-            const controls = new THREE.FirstPersonControls(camera, renderer.domElement)
-            controls.movementSpeed = 0//.6
-            controls.lookSpeed = 0//.01
+            // const controls = new THREE.FirstPersonControls(camera, renderer.domElement)
+            // controls.movementSpeed = 0//.6
+            // controls.lookSpeed = 0//.01
+
+            // const controls = new THREE.FlyControls(camera, renderer.domElement)
+            // controls.movementSpeed = 1
+            // controls.rollSpeed = .6
+            // controls.dragToLook = true
 
             const light = new THREE.AmbientLight()
             light.castShadow = true
@@ -116,14 +116,11 @@
 			// 	mixer.clipAction( gltf.animations[ 2 ] ).play()
             //     model_spirit.name = "model_spirit"
             // })
-
-            // Todo : Add fog here..
-            
-
             
             const clock = new THREE.Clock()
             var mixer = null
 
+            var recording_flight = false
             var flight_record = []
 
 			function update() {
@@ -134,47 +131,18 @@
 
                 if (mixer!=null) mixer.update(delta * .33)
 
-                controls.update(delta)
+                //controls.update(delta)
 
                 //renderer.clear()
 				renderer.render(scene, camera)
 
                 if (recording_flight) flight_record.push([camera.position.x, camera.position.y, camera.position.z, camera.rotation.x, camera.rotation.y, camera.rotation.z])
-                //console.log('[' + camera.position.x + ', ' + camera.position.y + ', ' + camera.position.z + ', ' + camera.rotation.x + ', ' + camera.rotation.y + ', ' + camera.rotation.z)
 
             } update()
 
-            var recording_flight = false
-            document.onkeypress = (e) => {
-                var keynum;
-                if (window.event) { // IE                  
-                    keynum = e.keyCode;
-                } else if(e.which) { // Netscape/Firefox/Opera                 
-                    keynum = e.which;
-                }
-                keynum = String.fromCharCode(keynum)
-                if (keynum == 'y' || keynum == 'Y') recording_flight = true
-            }
-            document.onkeyup = (e) => {
-                var keynum;
-                if (window.event) { // IE                  
-                    keynum = e.keyCode;
-                } else if(e.which) { // Netscape/Firefox/Opera                 
-                    keynum = e.which;
-                }
-                keynum = String.fromCharCode(keynum)
-                if (keynum == 'y' || keynum == 'Y') recording_flight = false
-
-                if (keynum == 'r' || keynum == 'R') console.log(JSON.stringify(flight_record))
-                if (keynum == 'g' || keynum == 'G') console.log('[' + camera.position.x + ', ' + camera.position.y + ', ' + camera.position.z + ', ' + camera.rotation.x + ', ' + camera.rotation.y + ', ' + camera.rotation.z + '],')
-            }
-
             const font_loader = new THREE.FontLoader()
-            var THREE_font
-
-            font_loader.load( 'fonts/droid/droid_serif_regular.typeface.json', function ( font ) {
-                THREE_font = font
-            } )
+            var threed_font
+            font_loader.load('fonts/droid/droid_serif_regular.typeface.json', (font) => {threed_font = font})
 
             function write_smt(smt, x, y, z, x_, y_, z_) {
                 var smt_ = ''
@@ -183,7 +151,7 @@
                     if ((i+1)%48==0) smt_ += '\n'
                 }
                 const geometry = new THREE.TextGeometry( smt_, {
-                    font: THREE_font,
+                    font: threed_font,
                     size: 6,
                     height: 1,
                 } )
@@ -199,6 +167,120 @@
             }
 
 		</script>
+
+        <script>
+
+            var movement_enabled = false
+            const move_sensitivity = .06
+            const look_sensitivity = 1           
+
+            var forward = false
+            var left = false
+            var right = false
+            var backward = false
+
+            document.onkeypress = (e) => {
+
+                var keynum
+                if (window.event) keynum = e.keyCode
+                else if(e.which) keynum = e.which
+                keynum = String.fromCharCode(keynum)
+
+                if (keynum == 'y' || keynum == 'Y') recording_flight = true
+
+                if (!movement_enabled) return
+
+                if (keynum == 'w' || keynum == 'W') forward = true
+                if (keynum == 'a' || keynum == 'A') left = true
+                if (keynum == 's' || keynum == 'S') backward = true
+                if (keynum == 'd' || keynum == 'D') right = true
+
+            }
+
+            document.onkeyup = (e) => {
+                
+                var keynum
+                if (window.event) keynum = e.keyCode
+                else if(e.which) keynum = e.which
+                keynum = String.fromCharCode(keynum)
+
+                if (keynum == 'y' || keynum == 'Y') recording_flight = false
+                if (keynum == 'r' || keynum == 'R') console.log(JSON.stringify(flight_record))
+                if (keynum == 'g' || keynum == 'G') console.log('[' + camera.position.x + ', ' + camera.position.y + ', ' + camera.position.z + ', ' + camera.rotation.x + ', ' + camera.rotation.y + ', ' + camera.rotation.z + '],')
+
+                if (!movement_enabled) return
+
+                if (keynum == 'w' || keynum == 'W') forward = false
+                if (keynum == 'a' || keynum == 'A') left = false
+                if (keynum == 's' || keynum == 'S') backward = false
+                if (keynum == 'd' || keynum == 'D') right = false
+
+            }
+
+            // todo lock the mouse
+            var mouseX_ = 0
+            var mouseY_ = 0
+            var mouseX_delta = 0
+            var mouseY_delta = 0
+            var phi = 0
+            var theta = 0
+            var q
+            var qx
+            var qz
+
+            var forward_velocity
+            var strafe_velocity
+            var forward_vec
+            var strafe_vec
+            var translate = new THREE.Vector3(0, 0, 0)
+
+            document.onmousemove = (e) => {
+                if (!movement_enabled) return
+                mouseX_delta = e.clientX-mouseX_ ; mouseX_ = e.clientX
+                mouseY_delta = e.clientY-mouseY_ ; mouseY_ = e.clientY
+            }
+
+            async function movement_update() {
+
+                while (true) {
+
+                    await sleep(.01)
+                    if (!movement_enabled) continue
+
+                    phi += -mouseX_delta /window.innerWidth *look_sensitivity
+                    theta = clamp(theta + -mouseY_delta /window.innerHeight *look_sensitivity, -Math.PI/3, Math.PI/3)
+
+                    qx = new THREE.Quaternion() ; qx.setFromAxisAngle(new THREE.Vector3(0,1,0), phi)
+                    qz = new THREE.Quaternion() ; qz.setFromAxisAngle(new THREE.Vector3(1,0,0), theta)
+
+                    q = new THREE.Quaternion()
+                    q.multiply(qx)
+                    q.multiply(qz)
+                    camera.quaternion.copy(q)
+
+                    forward_velocity = (forward ? 1 : 0) + (backward ? -1 : 0)
+                    strafe_velocity = (left ? 1 : 0) + (right ? -1 : 0)
+
+                    qx = new THREE.Quaternion()
+                    qx.setFromAxisAngle(new THREE.Vector3(0, 1, 0), phi)
+
+                    var forward_vec = new THREE.Vector3(0, 0, -1)
+                    forward_vec.applyQuaternion(qx)
+                    forward_vec.multiplyScalar(forward_velocity *move_sensitivity)
+
+                    var strafe_vec = new THREE.Vector3(-1, 0, 0)
+                    strafe_vec.applyQuaternion(qx)
+                    strafe_vec.multiplyScalar(strafe_velocity *move_sensitivity)
+                    
+                    translate.add(forward_vec)
+                    translate.add(strafe_vec)
+                    camera.position.copy(translate)
+
+                }
+
+            } movement_update()
+                    
+        </script>
 
         <script>
             const demos = {
@@ -252,7 +334,7 @@
                             button_login.innerHTML = 'Login'
                             button_login.style.color = 'white'
                             button_login.style.padding = '44px'
-                            button_login.style.border = 'none' //'solid 1px white'
+                            button_login.style.border = 'solid 1px white'
                             button_login.style.borderRadius = '10px'
                             button_login.style.outline = 'none'
                             button_login.style.fontFamily = 'Courier New'
@@ -388,7 +470,7 @@
                             button_guest.innerHTML = 'Guest'
                             button_guest.style.color = 'white'
                             button_guest.style.padding = '44px'
-                            button_guest.style.border = 'none' //'solid 1px white'
+                            button_guest.style.border = 'solid 1px white'
                             button_guest.style.borderRadius = '10px'
                             button_guest.style.outline = 'none'
                             button_guest.style.fontFamily = 'Courier New'
@@ -458,9 +540,7 @@
                                         (camera_placings[1][3]-camera_placings[0][3])/(fps*hm_seconds),
                                         (camera_placings[1][4]-camera_placings[0][4])/(fps*hm_seconds),
                                         (camera_placings[1][5]-camera_placings[0][5])/(fps*hm_seconds),
-                                        
                                     ]
-                                    //console.log('anim step:' + step)
                                     const sleep_for = 1/fps
                                     for (let i = 0; i < fps*hm_seconds; i++) {
                                         displace_camera(step)
@@ -485,12 +565,13 @@
                             var entity1_mouseover = false
                             button_entity1.innerHTML = 'the dreaming one'
                             button_entity1.style.color = 'white'
-                            button_entity1.style.border = 'none' //'solid 1px white'
+                            button_entity1.style.border = 'solid 1px white'
                             button_entity1.style.borderRadius = '10px'
                             button_entity1.style.outline = 'none'
                             button_entity1.style.fontFamily = 'Courier New'
                             button_entity1.style.fontSize = '16px'
                             button_entity1.style.padding = '16px'
+                            button_entity1.style.whiteSpace = 'nowrap'
                             button_entity1.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entity1.onclick = () => {
                                 entity_type = 'the dreaming one'
@@ -537,12 +618,13 @@
                             var entity2_mouseover = false
                             button_entity2.innerHTML = 'the perplexed one'
                             button_entity2.style.color = 'white'
-                            button_entity2.style.border = 'none' //'solid 1px white'
+                            button_entity2.style.border = 'solid 1px white'
                             button_entity2.style.borderRadius = '10px'
                             button_entity2.style.outline = 'none'
                             button_entity2.style.fontFamily = 'Courier New'
                             button_entity2.style.fontSize = '16px'
                             button_entity2.style.padding = '16px'
+                            button_entity2.style.whiteSpace = 'nowrap'
                             button_entity2.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entity2.onclick = () => {
                                 entity_type = 'the perplexed one'
@@ -589,12 +671,13 @@
                             var entity3_mouseover = false
                             button_entity3.innerHTML = 'the undivided one'
                             button_entity3.style.color = 'white'
-                            button_entity3.style.border = 'none' //'solid 1px white'
+                            button_entity3.style.border = 'solid 1px white'
                             button_entity3.style.borderRadius = '10px'
                             button_entity3.style.outline = 'none'
                             button_entity3.style.fontFamily = 'Courier New'
                             button_entity3.style.fontSize = '16px'
                             button_entity3.style.padding = '16px'
+                            button_entity3.style.whiteSpace = 'nowrap'
                             button_entity3.style.backgroundColor = 'rgba(0,0,0,.44)'
                             button_entity3.onclick = () => {
                                 entity_type = 'the undivided one'
@@ -740,7 +823,6 @@
                             response.style.width = '366px'
                             response.style.textAlign = 'center'
                             document.body.appendChild(response)
-                            //response.innerHTML = 'this is a sample response text'                   // TODO: make the buttons n stuff pretty
                             response.style.color = 'white'
                             response.style.fontFamily = 'Courier New'
                             response.style.fontSize = '16px'
@@ -862,7 +944,8 @@
                                 stage = 1
                                 response.innerHTML = ''
 
-                                controls.lookSpeed = 0//.06
+                                movement_enabled = false
+                                //controls.lookSpeed = 0//.06
                                 //place_camera(camera_placings[camera_placings.length-1])
 
                                 var button_exists = false
@@ -871,7 +954,8 @@
                                         button_exists = true
                                         break
                                     }
-                                if (!button_exists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
+                                //if (!button_exists) controls.lookAt(2.8984814900953606, -1.0141324546995314, -19.132418047956897)
+                                if (!button_exists) place_camera(camera_placings[camera_placings.length-1])
 
                                 scene.remove(model_spirit)
 
@@ -889,40 +973,40 @@
 
                             }
 
-                            var modelViewer
+                            // var modelViewer
 
-                            ar.onclick = () => {
+                            // ar.onclick = () => {
 
-                                document.body.removeChild(ar)
+                            //     document.body.removeChild(ar)
                             
-                                modelViewer = document.createElement('model-viewer')
-                                modelViewer.setAttribute('ar', '')
-                                modelViewer.setAttribute('src', 'spirit '+entity_type+'.glb')
-                                modelViewer.setAttribute('ios-src', 'spirit '+entity_type+'.glb')
-                                //modelViewer.setAttribute('auto-rotate', '')
-                                modelViewer.setAttribute('camera-controls', '')
-                                modelViewer.setAttribute('alt', 'A 3D model of an entity')
-                                modelViewer.setAttribute('camera-orbit', '180deg 0deg 3m')
-                                modelViewer.setAttribute('camera-target', '0m 1.66m 0m')
-                                modelViewer.style.width = '100%'
-                                modelViewer.style.height = '100%'
+                            //     modelViewer = document.createElement('model-viewer')
+                            //     modelViewer.setAttribute('ar', '')
+                            //     modelViewer.setAttribute('src', 'spirit '+entity_type+'.glb')
+                            //     modelViewer.setAttribute('ios-src', 'spirit '+entity_type+'.glb')
+                            //     //modelViewer.setAttribute('auto-rotate', '')
+                            //     modelViewer.setAttribute('camera-controls', '')
+                            //     modelViewer.setAttribute('alt', 'A 3D model of an entity')
+                            //     modelViewer.setAttribute('camera-orbit', '180deg 0deg 3m')
+                            //     modelViewer.setAttribute('camera-target', '0m 1.66m 0m')
+                            //     modelViewer.style.width = '100%'
+                            //     modelViewer.style.height = '100%'
 
-                                document.body.removeChild(renderer.domElement)
-                                document.body.appendChild(modelViewer)
-                                document.body.removeChild(send)
-                                document.body.appendChild(send)
-                                document.body.removeChild(reset)
-                                document.body.appendChild(reset)
-                                try {
-                                    document.body.removeChild(reply)
-                                    document.body.appendChild(reply)
-                                } catch { }
-                                try {
-                                    document.body.removeChild(response)
-                                    document.body.appendChild(response)
-                                } catch { }
+                            //     document.body.removeChild(renderer.domElement)
+                            //     document.body.appendChild(modelViewer)
+                            //     document.body.removeChild(send)
+                            //     document.body.appendChild(send)
+                            //     document.body.removeChild(reset)
+                            //     document.body.appendChild(reset)
+                            //     try {
+                            //         document.body.removeChild(reply)
+                            //         document.body.appendChild(reply)
+                            //     } catch { }
+                            //     try {
+                            //         document.body.removeChild(response)
+                            //         document.body.appendChild(response)
+                            //     } catch { }
 
-                            }
+                            // }
 
                             if (entity_type!='the obscure ones') {
 
@@ -946,7 +1030,8 @@
 
                             else {
 
-                                controls.lookSpeed = .06
+                                movement_enabled = true
+                                //controls.lookSpeed = .06
                                 //controls.movementSpeed = .6
 
                                 document.body.appendChild(reset)
@@ -961,14 +1046,6 @@
                     }
 
             } main()
-
-        </script>
-
-        <script>
-
-            
-
-            
 
         </script>
 
