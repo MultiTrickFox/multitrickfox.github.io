@@ -22,7 +22,16 @@
         <script src="3js/loaders/FontLoader.js"></script>
         <script src="3js/controls/FirstPersonControls.js"></script>
         <script src="3js/controls/FlyControls.js"></script>
-        <script src="3js/geometries/TextGeometry.js"></script>
+        <script src="3js/postprocessing/EffectComposer.js"></script>
+        <script src="3js/postprocessing/RenderPass.js"></script>
+        <script src="3js/postprocessing/ShaderPass.js"></script>
+        <script src="3js/shaders/CopyShader.js"></script>
+        <script src="3js/postprocessing/UnrealBloomPass.js"></script>
+        <script src="3js/shaders/LuminosityHighPassShader.js"></script>
+        <script src="3js/postprocessing/GlitchPass.js"></script>
+        <script src="3js/shaders/DigitalGlitch.js"></script>
+        <script src="3js/shaders/LuminosityShader.js"></script>
+        <script src="3js/shaders/VignetteShader.js"></script>
 
         <script> 
             const sleep = sec => new Promise(r => setTimeout(r, sec*1_000))
@@ -107,6 +116,16 @@
             //     scene.add(model_stairs)
             // })
 
+            var model_spring
+            // loader.load('spring.glb', function ( gltf ) {
+            //     model_spring = gltf.scene
+            //     model_spring.rotateY(-45)
+            //     model_spring.position.y = -6
+            //     model_spring.position.x = -18.6
+            //     model_spring.position.z = -2.8
+            //     scene.add(model_spring)
+            // })
+
             var model_spirit
             // loader.load('spirit.glb', function ( gltf ) {
             //     model_spirit = gltf.scene
@@ -116,9 +135,20 @@
 			// 	mixer.clipAction( gltf.animations[ 2 ] ).play()
             //     model_spirit.name = "model_spirit"
             // })
+
+            var model_spirits_floating = [null, null, null, null, null]
+
+            const composer = new THREE.EffectComposer(renderer)
+            composer.addPass(new THREE.RenderPass(scene, camera))
+            //composer.addPass(new THREE.UnrealBloomPass({x:1024,y:1024}, .6, .0, .6))
+            //composer.addPass(new THREE.GlitchPass())
+            //composer.addPass(new THREE.ShaderPass(THREE.LuminosityShader))
+            //composer.addPass(new THREE.ShaderPass(THREE.VignetteShader))
             
+
             const clock = new THREE.Clock()
             var mixer = null
+            var mixers_spirits_floating = [null, null, null, null, null]
 
             var recording_flight = false
             var flight_record = []
@@ -130,11 +160,13 @@
                 requestAnimationFrame(update)
 
                 if (mixer!=null) mixer.update(delta * .33)
+                mixers_spirits_floating.forEach((m) => { if (m!=null) m.update(delta * .33)} )
 
                 //controls.update(delta)
 
                 //renderer.clear()
-				renderer.render(scene, camera)
+				//renderer.render(scene, camera)
+                composer.render()
 
                 if (recording_flight) flight_record.push([camera.position.x, camera.position.y, camera.position.z, camera.rotation.x, camera.rotation.y, camera.rotation.z])
 
@@ -171,7 +203,7 @@
         <script>
 
             var movement_enabled = false
-            const move_sensitivity = .01
+            const move_sensitivity = .02
             const look_sensitivity = 1           
 
             var forward = false
@@ -221,6 +253,26 @@
             var mouseY_ = 0
             var mouseX_delta = 0
             var mouseY_delta = 0
+            var last_mouse_move = (new Date()).getMilliseconds()
+
+            document.onmousemove = (e) => {                 // TODO: implement a better mouse lookaround
+                if (!movement_enabled) return
+                mouseX_delta = e.clientX-mouseX_ ; mouseX_ = e.clientX
+                mouseY_delta = e.clientY-mouseY_ ; mouseY_ = e.clientY
+                last_mouse_move = (new Date()).getMilliseconds()
+            }
+
+            async function mouse_stop_check() {
+                while (true) {
+                    await sleep(.001)
+                    if (!movement_enabled) continue
+                    if ((new Date()).getMilliseconds() - last_mouse_move > 10) {
+                        mouseX_delta = 0
+                        mouseY_delta = 0
+                    }
+                }
+            } mouse_stop_check()
+
             var phi = 0
             var theta = 0
             var q
@@ -232,12 +284,6 @@
             var forward_vec
             var strafe_vec
             var translate = new THREE.Vector3(0, 0, 0)
-
-            document.onmousemove = (e) => {
-                if (!movement_enabled) return
-                mouseX_delta = e.clientX-mouseX_ ; mouseX_ = e.clientX
-                mouseY_delta = e.clientY-mouseY_ ; mouseY_ = e.clientY
-            }
 
             async function movement_update() {
 
@@ -798,22 +844,24 @@
                             // if (controls.object.rotation.x!=starting_pos[0]||controls.object.rotation.y!=starting_pos[1]||controls.object.rotation.z!=starting_pos[2])
                             //controls.lookAt(model_spirit.position.x, model_spirit.position.y, model_spirit.position.z)
 
-                            // Todo: do the entity talking thingy here
+                            if (entity_type!='the obscure ones') {
 
-                            var xhr = new XMLHttpRequest();
-                            xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
-                            xhr.setRequestHeader("username", username)
-                            xhr.setRequestHeader("password", password)
-                            xhr.setRequestHeader("cmd", "init")
-                            xhr.setRequestHeader("template", entity_type)
-                            xhr.onreadystatechange = function() {
-                                if (xhr.readyState == XMLHttpRequest.DONE) {
-                                    var result = JSON.parse(xhr.responseText)
-                                    console.log(result)
-                                    document.body.style.cursor = 'auto'
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                                xhr.setRequestHeader("username", username)
+                                xhr.setRequestHeader("password", password)
+                                xhr.setRequestHeader("cmd", "init")
+                                xhr.setRequestHeader("template", entity_type)
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                                        var result = JSON.parse(xhr.responseText)
+                                        console.log(result)
+                                        document.body.style.cursor = 'auto'
+                                    }
                                 }
+                                xhr.send()
+
                             }
-                            xhr.send()
 
                             var response = document.createElement('div')
                             response.style.position = 'absolute'
@@ -963,11 +1011,11 @@
                                 try { document.body.removeChild(send) } catch { }
                                 try { document.body.removeChild(ar) } catch { } 
 
-                                try { 
-                                    document.body.removeChild(modelViewer)
-                                    document.body.appendChild(renderer.domElement)
-                                } catch { }
-                                    
+                                // ToDo: remoove 
+
+                                model_spirits_floating.forEach((m)=>{ if (m!=null) scene.remove(m) })
+                                //mixers_spirits_floating.forEach((m)=>{ if (m!=null) m.stopAllAction() })
+
                                 //console.log(renderer.info)
 
                             }
@@ -1022,6 +1070,12 @@
                                     model_spirit.position.z = camera_placings[camera_placings.length-1][2] - 3.666
                                     model_spirit.rotateZ(Math.PI/20)
 
+                                    console.log("camera position:" + JSON.stringify(camera.position))
+                                    console.log("camera rotation:" + JSON.stringify(camera.rotation))
+
+                                    console.log("model position:" + JSON.stringify(model_spirit.position))
+                                    console.log("model rotation:" + JSON.stringify(model_spirit.rotation))
+
                                     //document.body.appendChild(ar)
                                 })
 
@@ -1036,24 +1090,127 @@
                                 document.body.appendChild(reset)
                                 document.body.removeChild(send)
 
-                                // if (model_stairs == null) {
+                                if (model_stairs == null) {
 
-                                //     loader.load('stairs.glb', function ( gltf ) {
-                                //         model_stairs = gltf.scene
-                                //         model_stairs.rotateY(-45)
-                                //         model_stairs.position.y = -6
-                                //         model_stairs.position.x = -18.6
-                                //         model_stairs.position.z = -2.8
-                                //         scene.add(model_stairs)
+                                    loader.load('stairs.glb', function ( gltf ) {
+                                        model_stairs = gltf.scene
+                                        model_stairs.rotateY(Math.PI/5)
+                                        model_stairs.position.y = -6
+                                        model_stairs.position.z = 18
+                                        model_stairs.position.x = -1.4
+                                        scene.add(model_stairs)
+                                    })
+
+                                }
+
+                                // if (model_spring == null) {
+
+                                //     loader.load('spring.glb', function ( gltf ) {
+                                //         model_spring = gltf.scene
+                                //         model_spring.scale.set(0.01, 0.01, 0.01)
+                                //         // model_spring.rotateY(Math.PI/5)
+                                //         // model_spring.position.y = -6
+                                //         // model_spring.position.z = 18
+                                //         model_spring.position.x = 6//4
+                                //         scene.add(model_spring)
                                 //     })
 
                                 // }
 
-                                // if (loader_secondpath == null) {
+                                const hm_floating_models = model_spirits_floating.length
 
-                                //     // todo; do
+                                var floating_loaded = true
+                                for (const m of model_spirits_floating) if (m==null) { floating_loaded = false ; break}
 
-                                // }
+                                if (!floating_loaded) {
+
+                                    for (let i = 1; i < hm_floating_models+1; i++) {
+
+                                        (new THREE.GLTFLoader()).load(('float'+i.toString()+'.glb').replace('%20',''), function ( gltf ) {
+                                
+                                            model_spirits_floating[i-1] = gltf.scene
+                                            let model = model_spirits_floating[i-1]
+                                            
+                                            //scene.add(model)
+                                            model.position.x = camera_placings[camera_placings.length-1][0] + .936
+                                            model.position.y = camera_placings[camera_placings.length-1][1] - .666
+                                            model.position.z = camera_placings[camera_placings.length-1][2] - 3.666
+                                            model.rotateZ(Math.PI/20)
+                                            model.rotateX(Math.PI/2)
+                                            mixers_spirits_floating[i-1] = new THREE.AnimationMixer( model )
+                                            mixers_spirits_floating[i-1].clipAction( gltf.animations[ 2 ] ).play()
+                                        })
+
+                                    }
+
+                                    while (!floating_loaded) {
+                                        floating_loaded = true
+                                        for (const m of model_spirits_floating) if (m==null) { floating_loaded = false ; break}
+                                        await sleep(.1)
+                                    }
+
+                                }
+
+                                const entity_centers = [
+                                    [1.8984814900953606, -1.0141324546995314, -17.0324180479569, 
+                                     1.5707963267948963, 0, 0.15707963267948966],
+
+
+
+                                    [],
+                                    [],
+                                    [],
+
+                                ]
+
+                                let results = [null]//, null, null, null, null] // TOdo: do hm_floating_models instead of 1
+                                
+                                for (let i = 0; i < 1; i++) { // TOdo: do hm_floating_models instead of 1
+
+                                    if (Math.random() < .999) {
+
+                                        model_spirits_floating[i].position.x = entity_centers[i][0]
+                                        model_spirits_floating[i].position.y = entity_centers[i][1]
+                                        model_spirits_floating[i].position.z = entity_centers[i][2]
+                                        model_spirits_floating[i].rotation.x = entity_centers[i][3]
+                                        model_spirits_floating[i].rotation.y = entity_centers[i][4]
+                                        model_spirits_floating[i].rotation.z = entity_centers[i][5]
+
+                                        scene.add(model_spirits_floating[i])
+
+                                        let xhr_ = new XMLHttpRequest();
+                                        xhr_.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                                        xhr_.setRequestHeader("username", username)
+                                        xhr_.setRequestHeader("password", password)
+                                        xhr_.setRequestHeader("cmd", "init")
+                                        xhr_.setRequestHeader("template", entity_type)
+                                        xhr_.onreadystatechange = function() {
+                                            if (xhr_.readyState == XMLHttpRequest.DONE) {
+                                                let result = JSON.parse(xhr_.responseText)
+                                                console.log("init template result:" + JSON.stringify(result))
+                                                results[i] = result
+                                            }
+                                        }
+                                        xhr_.send()
+                                        
+                                    } else { results[i] = 'NaN.'}
+
+                                }
+                                
+                                document.body.style.cursor = 'wait'
+
+                                var xhrs_completed = username==null
+
+                                while(!xhrs_completed) {
+
+                                    xhrs_completed = true
+                                    for (const r of results) if (r==null) { xhrs_completed=false; break }
+                                    await sleep(.1)
+
+                                }
+                                
+                                document.body.style.cursor = 'auto'
+
 
                             }
 
