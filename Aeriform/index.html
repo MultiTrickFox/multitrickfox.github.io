@@ -1196,6 +1196,18 @@
                                 }
                                 xhr_.send()
 
+                                for (let i = 0; i < 5; i++) {
+                                    if (Math.random() < .999) {
+                                        model_spirits_floating[i].position.x = entity_centers[i][0]
+                                        model_spirits_floating[i].position.y = entity_centers[i][1]
+                                        model_spirits_floating[i].position.z = entity_centers[i][2]
+                                        model_spirits_floating[i].rotation.x = entity_centers[i][3]
+                                        model_spirits_floating[i].rotation.y = entity_centers[i][4]
+                                        model_spirits_floating[i].rotation.z = entity_centers[i][5]
+                                        scene.add(model_spirits_floating[i])
+                                    }
+                                }
+
                                 document.body.style.cursor = 'wait'
                                 var xhrs_completed = username==null
                                 while(!xhrs_completed) {
@@ -1205,20 +1217,8 @@
                                 document.body.style.cursor = 'auto'
 
                                 var textmeshes = []
-
                                 for (let i = 0; i < 5; i++) {
-
                                     if (Math.random() < .999) {
-
-                                        model_spirits_floating[i].position.x = entity_centers[i][0]
-                                        model_spirits_floating[i].position.y = entity_centers[i][1]
-                                        model_spirits_floating[i].position.z = entity_centers[i][2]
-                                        model_spirits_floating[i].rotation.x = entity_centers[i][3]
-                                        model_spirits_floating[i].rotation.y = entity_centers[i][4]
-                                        model_spirits_floating[i].rotation.z = entity_centers[i][5]
-
-                                        scene.add(model_spirits_floating[i])
-
                                         textmeshes.push(
                                             write_smt(
                                                 seeds[i],
@@ -1229,18 +1229,11 @@
                                                 entity_centers[i][4],
                                                 entity_centers[i][5]
                                             )
-                                        )
-                                        
+                                        ) 
                                     }
-
                                 }
                                 
                                 
-
-                                
-                                    
-
-
 
 
 
