@@ -196,6 +196,7 @@
                 textMesh.rotation.y = y_
                 textMesh.scale.set(.016,.016,.016)
                 scene.add(textMesh)
+                return textMesh
             }
 
 		</script>
@@ -1016,6 +1017,9 @@
                                 model_spirits_floating.forEach((m)=>{ if (m!=null) scene.remove(m) })
                                 //mixers_spirits_floating.forEach((m)=>{ if (m!=null) m.stopAllAction() })
 
+                                textmeshes.forEach((m)=>scene.remove(m))
+                                textmeshes = []
+
                                 //console.log(renderer.info)
 
                             }
@@ -1152,20 +1156,32 @@
                                 }
 
                                 const entity_centers = [
+
                                     [1.8984814900953606, -1.0141324546995314, -17.0324180479569, 
                                      1.5707963267948963, 0, 0.15707963267948966],
 
+                                    [1.8984814900953606, -1.0141324546995314, -14.0324180479569, 
+                                    1.5707963267948963, 0, 0.15707963267948966],
+                                    
+                                    [1.8984814900953606, -1.0141324546995314, -10.0324180479569, 
+                                    1.5707963267948963, 0, 0.15707963267948966],
+
+                                    [1.8984814900953606, -1.0141324546995314, -8.0324180479569, 
+                                    1.5707963267948963, 0, 0.15707963267948966],
+
+                                    [1.8984814900953606, -1.0141324546995314, -4.0324180479569, 
+                                    1.5707963267948963, 0, 0.15707963267948966],
 
 
-                                    [],
-                                    [],
-                                    [],
+                                    [1.8984814900953606, -1.0141324546995314, -1.0324180479569, 
+                                    1.5707963267948963, 0, 0.15707963267948966],
 
                                 ]
 
-                                let results = [null]//, null, null, null, null] // TOdo: do hm_floating_models instead of 1
+                                let results = [null, null, null, null, null]
+                                var textmeshes = []
                                 
-                                for (let i = 0; i < 1; i++) { // TOdo: do hm_floating_models instead of 1
+                                for (let i = 0; i < 5; i++) {
 
                                     if (Math.random() < .999) {
 
@@ -1179,38 +1195,108 @@
                                         scene.add(model_spirits_floating[i])
 
                                         let xhr_ = new XMLHttpRequest();
-                                        xhr_.open("GET", 'https://lisica.lisica.ai:64244/aeriform', true)
+                                        xhr_.open("GET", 'https://lisica.lisica.ai:64244/aeriform2', true)
                                         xhr_.setRequestHeader("username", username)
                                         xhr_.setRequestHeader("password", password)
                                         xhr_.setRequestHeader("cmd", "init")
                                         xhr_.setRequestHeader("template", entity_type)
+                                        xhr_.setRequestHeader("population_id", i)
                                         xhr_.onreadystatechange = function() {
                                             if (xhr_.readyState == XMLHttpRequest.DONE) {
                                                 let result = JSON.parse(xhr_.responseText)
-                                                console.log("init template result:" + JSON.stringify(result))
-                                                results[i] = result
+                                                console.log("population" + i + "seed:" + JSON.stringify(result))
+                                                let textMesh = write_smt(result.answer, 
+                                                    entity_centers[i][0], 
+                                                    entity_centers[i][1], 
+                                                    entity_centers[i][2], 
+                                                    entity_centers[i][3]+Math.PI,
+                                                    entity_centers[i][4],
+                                                    entity_centers[i][5]
+                                                ) //smt, x, y, z, x_, y_, z_
+                                                results[i] = result.answer
+                                                textmeshes.push(textMesh)
                                             }
                                         }
                                         xhr_.send()
                                         
-                                    } else { results[i] = 'NaN.'}
+                                    } else { results[i] = 'not need result.'}
 
                                 }
                                 
                                 document.body.style.cursor = 'wait'
-
                                 var xhrs_completed = username==null
-
                                 while(!xhrs_completed) {
-
                                     xhrs_completed = true
                                     for (const r of results) if (r==null) { xhrs_completed=false; break }
                                     await sleep(.1)
-
                                 }
-                                
                                 document.body.style.cursor = 'auto'
 
+                                    
+
+
+
+
+
+
+                                async function check_generate() {
+
+                                    while (true) {
+
+                                        let i = 0
+                                        for (const center of entity_centers) {
+                                            i+=0
+
+                                            if (Math.sqrt(
+                                                Math.pow(camera.position.x-center[0],2)+
+                                                Math.pow(camera.position.y-center[1],2)+
+                                                Math.pow(camera.position.z-center[0],3)
+                                            ) < 4) {
+
+                                                console.log("generating for population " + i)
+
+                                                let xhr_ = new XMLHttpRequest();
+                                                xhr_.open("GET", 'https://lisica.lisica.ai:64244/aeriform2', true)
+                                                xhr_.setRequestHeader("username", username)
+                                                xhr_.setRequestHeader("password", password)
+                                                xhr_.setRequestHeader("cmd", "generate")
+                                                xhr_.setRequestHeader("template", entity_type)
+                                                xhr_.setRequestHeader("population_id", i)
+                                                xhr_.onreadystatechange = function() {
+                                                    if (xhr_.readyState == XMLHttpRequest.DONE) {
+                                                        let result = JSON.parse(xhr_.responseText)
+                                                        console.log("population" + i + "response:" + JSON.stringify(result))
+                                                        results[i] = result.answer
+                                                    }
+                                                }
+                                                xhr_.send()
+
+                                            } else {
+
+                                                console.log(JSON.stringify(camera.position))
+
+                                                console.log(JSON.stringify(center))
+
+                                                // console.log(camera.position.x-center[0])
+                                                // console.log(camera.position.y-center[1])
+                                                // console.log(camera.position.z-center[2])
+                    
+
+                                                console.log('******')
+
+                                            }
+
+                                            await sleep(3)
+
+                                            break
+
+                                        }
+
+                                        await sleep(.1)
+
+                                    }
+
+                                } check_generate()
 
                             }
 
