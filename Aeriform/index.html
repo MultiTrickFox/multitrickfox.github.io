@@ -20,18 +20,18 @@
         <script src="ThreeMin.js"></script>
         <script src="3js/loaders/GLTFLoader.js"></script>
         <script src="3js/loaders/FontLoader.js"></script>
-        <script src="3js/controls/FirstPersonControls.js"></script>
-        <script src="3js/controls/FlyControls.js"></script>
+        <!-- <script src="3js/controls/FirstPersonControls.js"></script>
+        <script src="3js/controls/FlyControls.js"></script> -->
         <script src="3js/postprocessing/EffectComposer.js"></script>
         <script src="3js/postprocessing/RenderPass.js"></script>
         <script src="3js/postprocessing/ShaderPass.js"></script>
         <script src="3js/shaders/CopyShader.js"></script>
-        <script src="3js/postprocessing/UnrealBloomPass.js"></script>
+        <!-- <script src="3js/postprocessing/UnrealBloomPass.js"></script>
         <script src="3js/shaders/LuminosityHighPassShader.js"></script>
         <script src="3js/postprocessing/GlitchPass.js"></script>
         <script src="3js/shaders/DigitalGlitch.js"></script>
         <script src="3js/shaders/LuminosityShader.js"></script>
-        <script src="3js/shaders/VignetteShader.js"></script>
+        <script src="3js/shaders/VignetteShader.js"></script> -->
 
         <script> 
             const sleep = sec => new Promise(r => setTimeout(r, sec*1_000))
@@ -71,7 +71,6 @@
 			renderer.setSize(window.innerWidth, window.innerHeight)
 
 			const scene = new THREE.Scene()
-            scene.add(new THREE.AxesHelper(100)) // todo: rm me
 
 			const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000)
             place_camera(camera_placings[0])
@@ -92,6 +91,13 @@
             const light = new THREE.AmbientLight()
             light.castShadow = true
             scene.add(light)
+
+            const composer = new THREE.EffectComposer(renderer)
+            composer.addPass(new THREE.RenderPass(scene, camera))
+            //composer.addPass(new THREE.UnrealBloomPass({x:1024,y:1024}, .6, .0, .6))
+            //composer.addPass(new THREE.GlitchPass())
+            //composer.addPass(new THREE.ShaderPass(THREE.LuminosityShader))
+            //composer.addPass(new THREE.ShaderPass(THREE.VignetteShader))
 
 			// const geometry = new THREE.BoxGeometry( 1, 1, 1 )
 			// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
@@ -128,30 +134,21 @@
             // })
 
             var model_spirit
+            var mixer = null
             // loader.load('spirit.glb', function ( gltf ) {
             //     model_spirit = gltf.scene
             //     model_spirit.rotateX(Math.PI/2)
             //     //scene.add(model_spirit)
             //     mixer = new THREE.AnimationMixer( model_spirit )
-			// 	mixer.clipAction( gltf.animations[ 2 ] ).play()
+			// 	   mixer.clipAction( gltf.animations[ 2 ] ).play()
             //     model_spirit.name = "model_spirit"
             // })
-
             var model_spirits_floating = [null, null, null, null, null]
             var model_spirits_floating_inscene = []
-
-            const composer = new THREE.EffectComposer(renderer)
-            composer.addPass(new THREE.RenderPass(scene, camera))
-            //composer.addPass(new THREE.UnrealBloomPass({x:1024,y:1024}, .6, .0, .6))
-            //composer.addPass(new THREE.GlitchPass())
-            //composer.addPass(new THREE.ShaderPass(THREE.LuminosityShader))
-            //composer.addPass(new THREE.ShaderPass(THREE.VignetteShader))
+            var mixers_spirits_floating_inscene = []
             
-
             const clock = new THREE.Clock()
-            var mixer = null
-            var mixers_spirits_floating = [null, null, null, null, null]
-
+            
             var recording_flight = false
             var flight_record = []
 
@@ -162,7 +159,7 @@
                 requestAnimationFrame(update)
 
                 if (mixer!=null) mixer.update(delta * .33)
-                mixers_spirits_floating.forEach((m) => { if (m!=null) m.update(delta * .33)} )
+                mixers_spirits_floating_inscene.forEach((m) => { if (m!=null) m.update(delta * .33)} )
 
                 //controls.update(delta)
 
@@ -1013,13 +1010,11 @@
                                 try { document.body.removeChild(reset) } catch { } 
                                 try { document.body.removeChild(reply) } catch { } 
                                 try { document.body.removeChild(send) } catch { }
-                                try { document.body.removeChild(ar) } catch { } 
-
-                                // ToDo: remoove 
 
                                 model_spirits_floating_inscene.forEach((m)=>{ if (m!=null) scene.remove(m) })
+                                mixers_spirits_floating_inscene.forEach((m)=>{ if (m!=null) m.stopAllAction() })
                                 model_spirits_floating_inscene = []
-                                //mixers_spirits_floating.forEach((m)=>{ if (m!=null) m.stopAllAction() })
+                                mixers_spirits_floating_inscene = []
 
                                 textmeshes.forEach((m)=>scene.remove(m))
                                 textmeshes = []
@@ -1027,41 +1022,6 @@
                                 //console.log(renderer.info)
 
                             }
-
-                            // var modelViewer
-
-                            // ar.onclick = () => {
-
-                            //     document.body.removeChild(ar)
-                            
-                            //     modelViewer = document.createElement('model-viewer')
-                            //     modelViewer.setAttribute('ar', '')
-                            //     modelViewer.setAttribute('src', 'spirit '+entity_type+'.glb')
-                            //     modelViewer.setAttribute('ios-src', 'spirit '+entity_type+'.glb')
-                            //     //modelViewer.setAttribute('auto-rotate', '')
-                            //     modelViewer.setAttribute('camera-controls', '')
-                            //     modelViewer.setAttribute('alt', 'A 3D model of an entity')
-                            //     modelViewer.setAttribute('camera-orbit', '180deg 0deg 3m')
-                            //     modelViewer.setAttribute('camera-target', '0m 1.66m 0m')
-                            //     modelViewer.style.width = '100%'
-                            //     modelViewer.style.height = '100%'
-
-                            //     document.body.removeChild(renderer.domElement)
-                            //     document.body.appendChild(modelViewer)
-                            //     document.body.removeChild(send)
-                            //     document.body.appendChild(send)
-                            //     document.body.removeChild(reset)
-                            //     document.body.appendChild(reset)
-                            //     try {
-                            //         document.body.removeChild(reply)
-                            //         document.body.appendChild(reply)
-                            //     } catch { }
-                            //     try {
-                            //         document.body.removeChild(response)
-                            //         document.body.appendChild(response)
-                            //     } catch { }
-
-                            // }
 
                             if (entity_type!='the obscure ones') {
 
@@ -1084,7 +1044,6 @@
                                     console.log("model position:" + JSON.stringify(model_spirit.position))
                                     console.log("model rotation:" + JSON.stringify(model_spirit.rotation))
 
-                                    //document.body.appendChild(ar)
                                 })
 
                             }
@@ -1131,22 +1090,9 @@
                                 if (!floating_loaded) {
 
                                     for (let i = 1; i < model_spirits_floating.length+1; i++) {
-
                                         (new THREE.GLTFLoader()).load(('float'+i.toString()+'.glb').replace('%20',''), function ( gltf ) {
-                                
-                                            model_spirits_floating[i-1] = gltf.scene
-                                            let model = model_spirits_floating[i-1]
-                                            
-                                            //scene.add(model)
-                                            model.position.x = camera_placings[camera_placings.length-1][0] + .936
-                                            model.position.y = camera_placings[camera_placings.length-1][1] - .666
-                                            model.position.z = camera_placings[camera_placings.length-1][2] - 3.666
-                                            model.rotateZ(Math.PI/20)
-                                            model.rotateX(Math.PI/2)
-                                            mixers_spirits_floating[i-1] = new THREE.AnimationMixer( model )
-                                            mixers_spirits_floating[i-1].clipAction( gltf.animations[ 2 ] ).play()
+                                            model_spirits_floating[i-1] = gltf//.scene
                                         })
-
                                     }
 
                                     while (!floating_loaded) {
@@ -1157,148 +1103,141 @@
 
                                 }
 
-                                const entity_centers = [ // Todo: start from here
+                                const population_centers = [
 
-                                    [8.0984814900953606, -1.0141324546995314, -20.5324180479569, 
-                                    1.5707963267948963, 0, 0.15707963267948966],
-
-                                    [9.6984814900953606, -1.0141324546995314, -19.0324180479569, 
-                                    1.5707963267948963, 0, 0.15707963267948966],
+                                    // [2.8984814900953606, -1.0141324546995314, -19.0324180479569, // original placement
+                                    // Math.PI/2, 0, 0],
                                     
-                                    [9.8984814900953606, -1.0141324546995314, -17.0324180479569, 
-                                    1.5707963267948963, 0, 0.15707963267948966],
-                     
+                                    [0.8984814900953606, -1.0141324546995314, -21.4624180479569, // inner 2
+                                     Math.PI/2, 0, 0],
 
+                                    [6.8984814900953606, -1.0141324546995314, -19.9624180479569,
+                                     Math.PI/2, 0, 0],
 
-                                    [1, -1.0141324546995314, -23.0324180479569, 
-                                    1.5707963267948963, 0, 0.15707963267948966],
+                                    [4.3984814900953606, -1.0141324546995314, -11.0324180479569, // outer 2
+                                     Math.PI/2, 0, 0],
 
-                                    [3, -1.0141324546995314, -21.0324180479569, 
-                                    1.5707963267948963, 0, 0.15707963267948966],
-
-                                    [-1.5, -1.0141324546995314, -22.5324180479569, 
-                                    1.5707963267948963, 0, 0.15707963267948966],
-
-
-
-                                    // [1.8984814900953606, -1.0141324546995314, -14.0324180479569, 
-                                    // 1.5707963267948963, 0, 0.15707963267948966],
-                                    
-                                    // [1.8984814900953606, -1.0141324546995314, -10.0324180479569, 
-                                    // 1.5707963267948963, 0, 0.15707963267948966],
-
-                                    // [1.8984814900953606, -1.0141324546995314, -8.0324180479569, 
-                                    // 1.5707963267948963, 0, 0.15707963267948966],
-
-                                    // [1.8984814900953606, -1.0141324546995314, -4.0324180479569, 
-                                    // 1.5707963267948963, 0, 0.15707963267948966],
-
-
-                                    // [1.8984814900953606, -1.0141324546995314, -1.0324180479569, 
-                                    // 1.5707963267948963, 0, 0.15707963267948966],
+                                    [-2.3984814900953606, -1.0141324546995314, -11.0324180479569,
+                                     Math.PI/2, 0, 0], 
 
                                 ]
 
-                                var seeds
-                                var entity_seeds
-                                var population_seeds
+                                var seeds = null
+                                var entity_seeds = null
+                                var population_seeds = null
                             
-                                document.body.style.cursor = 'wait'
+                                if (username!=null) {
 
-                                let xhr_ = new XMLHttpRequest();
-                                xhr_.open("GET", 'https://lisica.lisica.ai:64244/aeriform2', true)
-                                xhr_.setRequestHeader("username", username)
-                                xhr_.setRequestHeader("password", password)
-                                xhr_.setRequestHeader("cmd", "init")
-                                xhr_.setRequestHeader("template", entity_type)
-                                xhr_.setRequestHeader("hm_populations_types", 5)
-                                xhr_.setRequestHeader("hm_entities_types", 5)
-                                xhr_.setRequestHeader("hm_entities_per_population", 3)
-                                xhr_.onreadystatechange = function() {
-                                    if (xhr_.readyState == XMLHttpRequest.DONE) {
-                                        let result = JSON.parse(xhr_.responseText)
-                                        seeds = result.answer
-                                        console.log('seeds:'+seeds)
+                                    document.body.style.cursor = 'wait'
+
+                                    let xhr_ = new XMLHttpRequest();
+                                    xhr_.open("GET", 'https://lisica.lisica.ai:64244/aeriform2', true)
+                                    xhr_.setRequestHeader("username", username)
+                                    xhr_.setRequestHeader("password", password)
+                                    xhr_.setRequestHeader("cmd", "init")
+                                    xhr_.setRequestHeader("template", entity_type)
+                                    xhr_.setRequestHeader("hm_populations_types", 5)
+                                    xhr_.setRequestHeader("hm_entities_types", 5)
+                                    xhr_.setRequestHeader("hm_entities_per_population", 3)
+                                    xhr_.onreadystatechange = function() {
+                                        if (xhr_.readyState == XMLHttpRequest.DONE) {
+                                            let result = JSON.parse(xhr_.responseText)
+                                            seeds = result.answer
+                                            console.log('entity seeds:'+seeds[0])
+                                            console.log('population seeds:'+seeds[1])
+                                        }
                                     }
+                                    xhr_.send()
+                                    
+                                }                                
+
+                                var populations = []
+
+                                for (let i = 0; i < population_centers.length; i++) {
+
+                                    if (Math.random() < .666) {
+
+                                        populations.push([])
+
+                                        for (let ii = 0; ii < 3; ii++)
+
+                                            if (Math.random() < .666) populations[populations.length-1].push(ii)
+
+                                        if (populations[populations.length-1]==[]) populations[populations.length-1].push(0)
+
+                                    } else populations.push(null)
+
                                 }
-                                xhr_.send()
-                                while (seeds == null) await sleep(.1)
 
-                                document.body.style.cursor = 'auto'
+                                let population_ctr = -1
+                                for (const population of populations) {
+                                    population_ctr +=1
 
-                                entity_seeds = seeds[0]
-                                population_seeds = seeds[1]
+                                    if (population != null) {
+
+                                        let entity_ctr = -1
+                                        for (const entity of population) {
+                                            entity_ctr +=1
+
+                                            let m = model_spirits_floating[entity].scene.clone()
+                                            model_spirits_floating_inscene.push(m)
+
+                                            let mix = new THREE.AnimationMixer(m)
+                                            mix.clipAction(model_spirits_floating[entity].animations[2]).play()
+                                            mixers_spirits_floating_inscene.push(mix)
+
+                                            scene.add(m)
+
+                                            // todo: according to its entity_ctr, add a pi/3th distance here
+                                            m.position.x = population_centers[population_ctr][0]
+                                            m.position.y = population_centers[population_ctr][1]
+                                            m.position.z = population_centers[population_ctr][2]
+                                            m.rotation.x = population_centers[population_ctr][3]
+                                            m.rotation.y = population_centers[population_ctr][4]
+                                            m.rotation.z = population_centers[population_ctr][5]
+
+                                        }
+
+                                    }
+
+                                }
+
 
                                 
 
+                                if (username != null) {
 
+                                    while (seeds == null) await sleep(.1)
+                                        
+                                    entity_seeds = seeds[0]
+                                    population_seeds = seeds[1]
 
+                                    document.body.style.cursor = 'auto'
 
+                                } else {
 
+                                    entity_seeds = [] // pick from demo seeds here
+                                    population_seeds = []
 
- 
-                                for (let i = 0; i < entity_centers.length; i++) {
-                                    if (Math.random() < .999) {     // Todo: start by doing here
-
-                                        let m = model_spirits_floating[Math.floor(Math.random() * model_spirits_floating.length)].clone()
-
-                                        model_spirits_floating_inscene.push(m)
-
-                                        m.position.x = entity_centers[i][0]
-                                        m.position.y = entity_centers[i][1]
-                                        m.position.z = entity_centers[i][2]
-                                        m.rotation.x = entity_centers[i][3]
-                                        m.rotation.y = entity_centers[i][4]
-                                        m.rotation.z = entity_centers[i][5]
-                                        scene.add(m)
-
-                                        if (i == 0) m.rotateZ(Math.PI/10)
-                                        if (i == 1) m.rotateZ(Math.PI/3)
-                                        if (i == 2) m.rotateZ(Math.PI/2)
-
-                                        if (i == 4) m.rotateZ(Math.PI/3)
-                                        if (i == 5) m.rotateZ(-Math.PI/4)
-
-                                    }
                                 }
+
+
+
 
                                 var textmeshes = []
-                                for (let i = 0; i < 5; i++) {
-                                    if (Math.random() < .999) {
-                                        textmeshes.push(
-                                            write_smt(
-                                                entity_seeds[i],
-                                                entity_centers[i][0], 
-                                                entity_centers[i][1], 
-                                                entity_centers[i][2], 
-                                                entity_centers[i][3]+Math.PI,
-                                                entity_centers[i][4],
-                                                entity_centers[i][5]
-                                            )
-                                        ) 
-                                    }
-                                }
-
-
-
-
-                                // document.body.style.cursor = 'wait'                      // todo: unlock me
-                                // var xhrs_completed = username==null
-                                // while(!xhrs_completed) {
-                                //     xhrs_completed = seeds!=null
-                                //     await sleep(.1)
-                                // }
-                                // document.body.style.cursor = 'auto'
-
-
-
-
-
                                 
-                                
-                                
-
-
+                                // textmeshes.push(
+                                        //     write_smt(
+                                        //         entity_seeds[entity_id],
+                                        //         poopulation_centers[i][0], 
+                                        //         poopulation_centers[i][1], 
+                                        //         poopulation_centers[i][2], 
+                                        //         poopulation_centers[i][3]+Math.PI,
+                                        //         poopulation_centers[i][4],
+                                        //         poopulation_centers[i][5]
+                                        //     )
+                                        // ) 
+        
 
 
                                 // async function check_generate() {
@@ -1306,7 +1245,7 @@
                                 //     while (true) {
 
                                 //         let i = 0
-                                //         for (const center of entity_centers) {
+                                //         for (const center of poopulation_centers) {
                                 //             i+=0
 
                                 //             if (Math.sqrt(
